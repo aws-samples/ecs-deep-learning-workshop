@@ -476,7 +476,8 @@ Resources:
           Principal:
             Service: [ec2.amazonaws.com]
         Version: 2012-10-17
-      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role']
+      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role',
+        'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser']
       Path: /
     Type: AWS::IAM::Role
   spotFleetRole:
