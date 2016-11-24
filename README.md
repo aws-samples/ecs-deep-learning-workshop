@@ -3,8 +3,7 @@
   
 ## Overview
 Deep Learning (DL) is an implementation of Machine Learning (ML) that uses neural networks to solve difficult problems such as image recognition, sentiment analysis and recommendations.  Neural networks simulate the functions of the brain where artificial neurons work in concert to detect patterns in data.  This allows deep learning algorithms to classify, predict and recommend with a high degree of accuracy as more data is trained in the network.  DL algorithms generally operate with a high degree of parallelism and is computationally intense.  As a result, emerging deep learning libraries, frameworks, and platforms allow for data and model parallelization and can leverage advancements in GPU technology for improved performance.  
-
-This workshop will walk you through the deployment of a deep learning library called [MXNet](http://mxnet.io) on AWS using Docker containers.  Containers provide isolation, portability and repeatability, so your developers or data science teams can easily spin up an environment and be working without the heavy lifting.  
+This workshop will walk you through the deployment of a deep learning library called [MXNet](http://mxnet.io) on AWS using Docker containers.  Containers provide isolation, portability and repeatability, so your developers can easily spin up an environment and start building without the heavy lifting.  
 
 The goal is not to go deep on the learning (no pun intended) aspects, but to illustrate how easy it is to deploy your deep learning environment on AWS and use the same tools to scale your resources as needed.  
 
@@ -33,34 +32,56 @@ This section will appear again below as a reminder because you will be deploying
 ## Let's Begin!  
 
 ### Your Challenge  
-There are just not enough cat videos on social media these days, to the point where it would be amazing to have a social network dedicated to devoted cat lovers around the world.  Problem is, how do you make sure images uploaded to this niche network are cat related.  Image classification to the rescue!  
+There are just not enough cat picturs on social media these days, to the point where it would be amazing to have a social network dedicated to devoted cat lovers around the world.  Problem is, how do you make sure images uploaded to this niche network are cat related.  Image classification to the rescue!  
 
 Implement MXNet to recognize a variety of images, so you can specifically identify ones of our favorite feline friend!   
 
 ### Lab 1 - Setup the Workshop Environment on AWS 
-In this lab, you will set up the workshop environment.  
+In this lab, you will set up the following workshop environment: 
 
-1\. Create an SSH key pair, download *keyname.pem* file for safe keeping.  
+*INSERT DIAGRAM HERE*  
 
-2\. Run one of these CloudFormation templates:  
+1\. First you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.    
+
+2\. For your convenience, we provide a CloudFormation template to stand up the core infrastructure.  Click on one of these CloudFormation templates to launch your stack:  
 
 Region | Launch Template
 ------------ | -------------  
 **Ohio** (us-east-2) | [![Launch ECS Deep Learning Stack into Ohio with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/BUCKET/TEMPLATE.YAML)  
 **Oregon** (us-west-2) | [![Launch ECS Deep Learning Stack into Oregon with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/BUCKET/TEMPLATE.YAML)  
 
-*describe what this is doing*  
-creates VPC, IAM, S3 bucket?, ECR container registry, launch EC2 ECS-optimized AMI, ECS cluster 
-
-*add more instructions...*  
+The template will automatically bring you to the CloudFormation Dashboard and start the stack creation process in the specified region.  The template sets up a VPC, IAM roles, S3 bucket, ECR container registry, and an ECS cluster which is comprised of two EC2 instances with the Docker daemon running on each.  The idea is to provide a contained environment, so as not to interfere with any other things in your account.   
 
 **Checkpoint**  
-*add steps to verify successful completion of the lab*  
+In the CloudFormation Dashboard, your stack should show status CREATE\_COMPLETE.  
+
+*INSERT SCREENSHOT HERE*
+
+If there was an error during the stack creation process, CloudFormation will rollback and terminate.  You can investigate and troubleshoot by looking for errors in the Events tab.     
 
 ### Lab 2 - Build an MXNet Container  
-In this lab, you will build the MXNet docker container.  It turns out there are quite a few dependencies, so we have provided a Dockerfile in the lab 2 folder to make sure you don't miss anything.  Links to MXNet documentation are provided in the Appendix if you're curious about build dependencies that we used.    
+In this lab, you will build an MXNet docker container.  There are quite a few dependencies, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  You can also review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it. 
 
-*add instructions...*  
+1\. You will build the container in one of the EC2 instances from the ECS cluster.  Go to the EC2 Dashboard in the Management Console.  Select one of the EC2 instances created by the CloudFormation stack, and note the Public DNS name. 
+
+*INSERT SCREENSHOT HERE*
+
+SSH into the host  
+`ssh -i <private-key.pem> ec2-user@<ec2-public-DNS-name>`
+
+2\. Once logged into the EC2 instance, install git and clone the workshop github repository.  
+`sudo yum -y install git
+git clone https://github.com/awslabs/ecs-deep-learning-workshop.git`
+
+3\. You'll use the lab-2-build/mxnet/ folder as our working folder.  
+`cd ecs-deep-learning-workshop/lab-2-build/mxnet`
+
+4\. Generate an SSH key pair.  The container build process will configure public key authentication for SSH access to the container.  Later in the workshop, you'll see that training commands will be issued over SSH.       
+`ssh-keygen -t rsa -b 4096 -f id_rsa
+cp -av id_rsa* $HOME/.ssh/`  
+
+5\. Now you're ready to build the Dockerfile.  
+`docker build -t mxnet .`
 
 [Optional] - store your MXNet container in the created ECR registry or a registry of your choosing.    
 
@@ -68,6 +89,7 @@ In this lab, you will build the MXNet docker container.  It turns out there are 
 **Checkpoint**  
 *add steps to verify successful completion of the lab*  
 run the container in interactive mode with bash shell 
+test SSH access to the instance
 
 ### Lab 3 - Deploy the MXNet Container with ECS  
 Now that you have an MXNet container ready to go, you will create a task definition to deploy your shiny new container with ECS.  Task definitions specify key parameters used by ECS to run your container.  For example, it specifies which Docker image to deploy, cpu/memory resource requirements, port mappings, volume mappings and more.  Task Definitions can be represented in JSON, so for your convenience, we provide a task definition in the lab 3 folder for you to use.       
@@ -116,9 +138,12 @@ Here are estimated costs for running this 2 hour workshop:
 *add cost estimate for EC2 and other*  
 
 ### AWS Resources
-If this workshop was a tasty bowl of term soup, check these links out to learn more about and gain some hands-on experience with AWS services.  
--  [AWS Services](https://aws.amazon.com/)  
-- [A Cloud Guru self-paced labs](https://acloud.guru/courses)  
+Check out these links to learn more about the services used in this workshop  
+- [AWS Services](https://aws.amazon.com/)  
+- [A Cloud Guru self-paced AWS labs](https://acloud.guru/courses)  
+
+https://aws.amazon.com/blogs/compute/powering-your-amazon-ecs-clusters-with-spot-fleet/
+
 
 ### Docker Resources
 If you're wondering if a container is the same as a VM, you're on the right track, but the truth shall set you free.  Have a look here to learn more about containerization technology and why it's all the rage.  
