@@ -1,0 +1,502 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Environment for running ECS Deep Learning Workshop
+Mappings:
+  CidrMappings:
+    public-subnet-1: {CIDR: 10.0.1.0/24}
+    public-subnet-2: {CIDR: 10.0.2.0/24}
+    vpc: {CIDR: 10.0.0.0/16}
+  ECSAmi:
+    ap-northeast-1: {AMI: ami-9cd57ffd}
+    ap-southeast-1: {AMI: ami-a900a3ca}
+    ap-southeast-2: {AMI: ami-5781be34}
+    eu-central-1: {AMI: ami-54f5303b}
+    eu-west-1: {AMI: ami-a1491ad2}
+    us-east-1: {AMI: ami-eca289fb}
+    us-east-2: {AMI: ami-446f3521}
+    us-west-1: {AMI: ami-9fadf8ff}
+    us-west-2: {AMI: ami-7abc111a}
+Outputs:
+  ecrRepository:
+    Description: The name of the ECR Repository
+    Value: {Ref: ecrRepository}
+  ecsClusterName:
+    Description: The name of the ECS Cluster
+    Value: {Ref: ecsCluster}
+  inputBucketName:
+    Description: The name of the input S3 Bucket
+    Value: {Ref: inputBucket}
+  outputBucketName:
+    Description: The name of the output S3 Bucket
+    Value: {Ref: outputBucket}
+  spotFleetName:
+    Description: The name of the Spot Fleet
+    Value: {Ref: spotFleet}
+Parameters:
+  KeyName: {Description: Name of an existing EC2 KeyPair to enable SSH access to the
+      EC2 instances, Type: 'AWS::EC2::KeyPair::KeyName'}
+  SourceCidr: {Default: 0.0.0.0/0, Description: Optional - CIDR/IP range for instance
+      ssh access - defaults to 0.0.0.0/0, Type: String}
+Resources:
+  attachGateway:
+    DependsOn: [vpc, internetGateway]
+    Properties:
+      InternetGatewayId: {Ref: internetGateway}
+      VpcId: {Ref: vpc}
+    Type: AWS::EC2::VPCGatewayAttachment
+  ecrRepository: {Type: 'AWS::ECR::Repository'}
+  ecsCluster: {Type: 'AWS::ECS::Cluster'}
+  inputBucket: {Type: 'AWS::S3::Bucket'}
+  internetGateway:
+    DependsOn: [vpc]
+    Type: AWS::EC2::InternetGateway
+  outputBucket: {Type: 'AWS::S3::Bucket'}
+  publicRoute:
+    DependsOn: [publicRouteTable, attachGateway]
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: {Ref: internetGateway}
+      RouteTableId: {Ref: publicRouteTable}
+    Type: AWS::EC2::Route
+  publicRouteTable:
+    DependsOn: [vpc, attachGateway]
+    Properties:
+      Tags:
+      - {Key: Name, Value: Public Route Table}
+      VpcId: {Ref: vpc}
+    Type: AWS::EC2::RouteTable
+  publicSubnet1:
+    DependsOn: attachGateway
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 0
+        - Fn::GetAZs: {Ref: 'AWS::Region'}
+      CidrBlock:
+        Fn::FindInMap: [CidrMappings, public-subnet-1, CIDR]
+      MapPublicIpOnLaunch: true
+      Tags:
+      - {Key: Name, Value: Public Subnet 1}
+      VpcId: {Ref: vpc}
+    Type: AWS::EC2::Subnet
+  publicSubnet1RouteTableAssociation:
+    DependsOn: [publicRouteTable, publicSubnet1, attachGateway]
+    Properties:
+      RouteTableId: {Ref: publicRouteTable}
+      SubnetId: {Ref: publicSubnet1}
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  publicSubnet2:
+    DependsOn: attachGateway
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 1
+        - Fn::GetAZs: {Ref: 'AWS::Region'}
+      CidrBlock:
+        Fn::FindInMap: [CidrMappings, public-subnet-2, CIDR]
+      MapPublicIpOnLaunch: true
+      Tags:
+      - {Key: Name, Value: Public Subnet 2}
+      VpcId: {Ref: vpc}
+    Type: AWS::EC2::Subnet
+  publicSubnet2RouteTableAssociation:
+    DependsOn: [publicRouteTable, publicSubnet2, attachGateway]
+    Properties:
+      RouteTableId: {Ref: publicRouteTable}
+      SubnetId: {Ref: publicSubnet2}
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  scalableTarget:
+    DependsOn: [spotFleet, spotFleetAutoscaleRole]
+    Properties:
+      MaxCapacity: 2
+      MinCapacity: 2
+      ResourceId:
+        Fn::Join:
+        - /
+        - - spot-fleet-request
+          - {Ref: spotFleet}
+      RoleARN:
+        Fn::GetAtt: [spotFleetAutoscaleRole, Arn]
+      ScalableDimension: ec2:spot-fleet-request:TargetCapacity
+      ServiceNamespace: ec2
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+  scalingPolicy:
+    Properties:
+      PolicyName: StepPolicy
+      PolicyType: StepScaling
+      ScalingTargetId: {Ref: scalableTarget}
+      StepScalingPolicyConfiguration:
+        AdjustmentType: PercentChangeInCapacity
+        Cooldown: 30
+        MetricAggregationType: Average
+        StepAdjustments:
+        - {MetricIntervalLowerBound: 0, ScalingAdjustment: 100}
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+  securityGroup:
+    Properties:
+      GroupDescription: Spot Fleet Instance Security Group
+      SecurityGroupIngress:
+      - CidrIp: {Ref: SourceCidr}
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+      - {CidrIp: 0.0.0.0/0, FromPort: 80, IpProtocol: tcp, ToPort: 80}
+      VpcId: {Ref: vpc}
+    Type: AWS::EC2::SecurityGroup
+  spotFleet:
+    DependsOn: [spotFleetRole, spotFleetInstanceProfile, ecsCluster]
+    Properties:
+      SpotFleetRequestConfigData:
+        AllocationStrategy: diversified
+        IamFleetRole:
+          Fn::GetAtt: [spotFleetRole, Arn]
+        LaunchSpecifications:
+        - IamInstanceProfile:
+            Arn:
+              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+          ImageId:
+            Fn::FindInMap:
+            - ECSAmi
+            - {Ref: 'AWS::Region'}
+            - AMI
+          InstanceType: m4.large
+          KeyName: {Ref: KeyName}
+          Monitoring: {Enabled: true}
+          SecurityGroups:
+          - GroupId: {Ref: securityGroup}
+          SubnetId:
+            Fn::Join:
+            - ','
+            - - {Ref: publicSubnet1}
+              - {Ref: publicSubnet2}
+          UserData:
+            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+
+                yum -y --security update
+
+                yum -y install aws-cli git
+
+                echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                su - ec2-user -c "aws configure set default.region ${AWS::Region}"
+
+                mkdir /home/ec2-user/.docker
+
+                cat << EOF > /home/ec2-user/.docker/config.json
+
+                {
+
+                "credsStore": "ecr-login"
+
+                }
+
+                EOF
+
+                chown -R ec2-user. /home/ec2-user/.docker
+
+                git clone https://github.com/awslabs/amazon-ecr-credential-helper.git
+
+                cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
+                /usr/local/bin/
+
+                '}
+        - IamInstanceProfile:
+            Arn:
+              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+          ImageId:
+            Fn::FindInMap:
+            - ECSAmi
+            - {Ref: 'AWS::Region'}
+            - AMI
+          InstanceType: m4.xlarge
+          KeyName: {Ref: KeyName}
+          Monitoring: {Enabled: true}
+          SecurityGroups:
+          - GroupId: {Ref: securityGroup}
+          SubnetId:
+            Fn::Join:
+            - ','
+            - - {Ref: publicSubnet1}
+              - {Ref: publicSubnet2}
+          UserData:
+            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+
+                yum -y --security update
+
+                yum -y install aws-cli git
+
+                echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                su - ec2-user -c "aws configure set default.region ${AWS::Region}"
+
+                mkdir /home/ec2-user/.docker
+
+                cat << EOF > /home/ec2-user/.docker/config.json
+
+                {
+
+                "credsStore": "ecr-login"
+
+                }
+
+                EOF
+
+                chown -R ec2-user. /home/ec2-user/.docker
+
+                git clone https://github.com/awslabs/amazon-ecr-credential-helper.git
+
+                cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
+                /usr/local/bin/
+
+                '}
+        - IamInstanceProfile:
+            Arn:
+              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+          ImageId:
+            Fn::FindInMap:
+            - ECSAmi
+            - {Ref: 'AWS::Region'}
+            - AMI
+          InstanceType: c4.large
+          KeyName: {Ref: KeyName}
+          Monitoring: {Enabled: true}
+          SecurityGroups:
+          - GroupId: {Ref: securityGroup}
+          SubnetId:
+            Fn::Join:
+            - ','
+            - - {Ref: publicSubnet1}
+              - {Ref: publicSubnet2}
+          UserData:
+            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+
+                yum -y --security update
+
+                yum -y install aws-cli git
+
+                echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                su - ec2-user -c "aws configure set default.region ${AWS::Region}"
+
+                mkdir /home/ec2-user/.docker
+
+                cat << EOF > /home/ec2-user/.docker/config.json
+
+                {
+
+                "credsStore": "ecr-login"
+
+                }
+
+                EOF
+
+                chown -R ec2-user. /home/ec2-user/.docker
+
+                git clone https://github.com/awslabs/amazon-ecr-credential-helper.git
+
+                cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
+                /usr/local/bin/
+
+                '}
+        - IamInstanceProfile:
+            Arn:
+              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+          ImageId:
+            Fn::FindInMap:
+            - ECSAmi
+            - {Ref: 'AWS::Region'}
+            - AMI
+          InstanceType: c4.xlarge
+          KeyName: {Ref: KeyName}
+          Monitoring: {Enabled: true}
+          SecurityGroups:
+          - GroupId: {Ref: securityGroup}
+          SubnetId:
+            Fn::Join:
+            - ','
+            - - {Ref: publicSubnet1}
+              - {Ref: publicSubnet2}
+          UserData:
+            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+
+                yum -y --security update
+
+                yum -y install aws-cli git
+
+                echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                su - ec2-user -c "aws configure set default.region ${AWS::Region}"
+
+                mkdir /home/ec2-user/.docker
+
+                cat << EOF > /home/ec2-user/.docker/config.json
+
+                {
+
+                "credsStore": "ecr-login"
+
+                }
+
+                EOF
+
+                chown -R ec2-user. /home/ec2-user/.docker
+
+                git clone https://github.com/awslabs/amazon-ecr-credential-helper.git
+
+                cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
+                /usr/local/bin/
+
+                '}
+        - IamInstanceProfile:
+            Arn:
+              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+          ImageId:
+            Fn::FindInMap:
+            - ECSAmi
+            - {Ref: 'AWS::Region'}
+            - AMI
+          InstanceType: r3.large
+          KeyName: {Ref: KeyName}
+          Monitoring: {Enabled: true}
+          SecurityGroups:
+          - GroupId: {Ref: securityGroup}
+          SubnetId:
+            Fn::Join:
+            - ','
+            - - {Ref: publicSubnet1}
+              - {Ref: publicSubnet2}
+          UserData:
+            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+
+                yum -y --security update
+
+                yum -y install aws-cli git
+
+                echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                su - ec2-user -c "aws configure set default.region ${AWS::Region}"
+
+                mkdir /home/ec2-user/.docker
+
+                cat << EOF > /home/ec2-user/.docker/config.json
+
+                {
+
+                "credsStore": "ecr-login"
+
+                }
+
+                EOF
+
+                chown -R ec2-user. /home/ec2-user/.docker
+
+                git clone https://github.com/awslabs/amazon-ecr-credential-helper.git
+
+                cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
+                /usr/local/bin/
+
+                '}
+        - IamInstanceProfile:
+            Arn:
+              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+          ImageId:
+            Fn::FindInMap:
+            - ECSAmi
+            - {Ref: 'AWS::Region'}
+            - AMI
+          InstanceType: r3.xlarge
+          KeyName: {Ref: KeyName}
+          Monitoring: {Enabled: true}
+          SecurityGroups:
+          - GroupId: {Ref: securityGroup}
+          SubnetId:
+            Fn::Join:
+            - ','
+            - - {Ref: publicSubnet1}
+              - {Ref: publicSubnet2}
+          UserData:
+            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+
+                yum -y --security update
+
+                yum -y install aws-cli git
+
+                echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                su - ec2-user -c "aws configure set default.region ${AWS::Region}"
+
+                mkdir /home/ec2-user/.docker
+
+                cat << EOF > /home/ec2-user/.docker/config.json
+
+                {
+
+                "credsStore": "ecr-login"
+
+                }
+
+                EOF
+
+                chown -R ec2-user. /home/ec2-user/.docker
+
+                git clone https://github.com/awslabs/amazon-ecr-credential-helper.git
+
+                cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
+                /usr/local/bin/
+
+                '}
+        SpotPrice: 1.0
+        TargetCapacity: 2
+        TerminateInstancesWithExpiration: true
+    Type: AWS::EC2::SpotFleet
+  spotFleetAutoscaleRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [application-autoscaling.amazonaws.com]
+        Version: 2012-10-17
+      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetAutoscaleRole']
+      Path: /
+    Type: AWS::IAM::Role
+  spotFleetInstanceProfile:
+    DependsOn: [spotFleetInstanceRole]
+    Properties:
+      Path: /
+      Roles:
+      - {Ref: spotFleetInstanceRole}
+    Type: AWS::IAM::InstanceProfile
+  spotFleetInstanceRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [ec2.amazonaws.com]
+        Version: 2012-10-17
+      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role']
+      Path: /
+    Type: AWS::IAM::Role
+  spotFleetRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [spotfleet.amazonaws.com]
+        Version: 2012-10-17
+      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole']
+      Path: /
+    Type: AWS::IAM::Role
+  vpc:
+    Properties:
+      CidrBlock:
+        Fn::FindInMap: [CidrMappings, vpc, CIDR]
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+      - {Key: Name, Value: VPC for ECS Deep Learning Workshop}
+    Type: AWS::EC2::VPC
