@@ -92,7 +92,7 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
        
 *Note: you will be prompted to enter a passphrase suing the ssh-keygen command, just leave it blank and press enter.*  
 
-`$ ssh-keygen -t rsa -b 4096 -f id_rsa 
+`$ ssh-keygen -t rsa -b 4096 -f id_rsa  
 $ cp -av id_rsa* $HOME/.ssh/`    
 
 5\. Now you're ready to build the Docker image using the provided Dockerfile.
