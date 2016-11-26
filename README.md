@@ -36,14 +36,11 @@ There are just not enough cat picturs on social media these days, to the point w
 
 Implement MXNet to recognize a variety of images, so you can specifically identify ones of our favorite feline friend!   
 
-Here is the overall architecture of what you will be building throughout this workshop:
+Here is the overall architecture of what you will be building throughout this workshop.  By the end of the workshop, your developers will have the ability to interact directly with the MXNet containers using SSH or Jupyter notebooks.  They will also have the option to create Tasks in ECS which can be run through the management console, CLI or SDKs. 
 
 ![Workshop Architecture](/images/architecture.png)
 
-### Lab 1 - Setup the Workshop Environment on AWS 
-In this lab, you will set up the following workshop environment: 
-
-*INSERT DIAGRAM HERE*  
+### Lab 1 - Set up the Workshop Environment on AWS    
 
 1\. First you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.    
 
@@ -64,7 +61,7 @@ In the CloudFormation Dashboard, your stack should show status CREATE\_COMPLETE.
 If there was an error during the stack creation process, CloudFormation will rollback and terminate.  You can investigate and troubleshoot by looking for errors in the Events tab.     
 
 ### Lab 2 - Build an MXNet Container  
-In this lab, you will build an MXNet docker container using one of the ECS cluster instances which already comes bundled with the Docker installed.  There are quite a few dependencies for MXNet, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  MXNet uses SSH as the mechanism for communication between containers, so you'll be generating an SSH key pair to configure public key authentication for secure access.  You can review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it.  
+In this lab, you will build an MXNet docker container using one of the ECS cluster instances which already comes bundled with Docker installed.  There are quite a few dependencies for MXNet, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  MXNet uses SSH as the mechanism for communication between containers, so you'll be generating an SSH key pair to configure public key authentication for secure access.  You can review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it.  
 
 1\. You will build the container in one of the EC2 instances from the ECS cluster.  Go to the EC2 Dashboard in the Management Console.  Select one of the EC2 instances created by the CloudFormation stack, and note the Public DNS name. 
 
