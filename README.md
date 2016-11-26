@@ -36,6 +36,10 @@ There are just not enough cat picturs on social media these days, to the point w
 
 Implement MXNet to recognize a variety of images, so you can specifically identify ones of our favorite feline friend!   
 
+Here is the overall architecture of what you will be building throughout this workshop:
+
+![Workshop Architecture](/images/architecture.png)
+
 ### Lab 1 - Setup the Workshop Environment on AWS 
 In this lab, you will set up the following workshop environment: 
 
