@@ -40,7 +40,7 @@ This section will appear again below as a reminder because you will be deploying
 
 ## Let's Begin!  
 
-### Your Challenge  
+### Your Challenge:  
 There are just not enough cat picturs on social media these days, to the point where it would be amazing to have a social network dedicated to devoted cat lovers around the world.  Problem is, how do you make sure images uploaded to this niche network are cat related.  Image classification to the rescue!  
 
 Implement MXNet to recognize a variety of images, so you can specifically identify ones of our favorite feline friend!   
@@ -49,7 +49,7 @@ Here is the overall architecture of what you will be building throughout this wo
 
 ![Overall Architecture](/images/architecture.png)
 
-### Lab 1 - Set up the Workshop Environment on AWS    
+### Lab 1 - Set up the Workshop Environment on AWS:    
 
 1\. First you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.    
 
@@ -69,7 +69,7 @@ Periodically check on the stack creation process in the CloudFormation Dashboard
 
 If there was an error during the stack creation process, CloudFormation will rollback and terminate.  You can investigate and troubleshoot by looking in the Events tab.  Any errors encountered during stack creation will appear in the event log.      
 
-### Lab 2 - Build an MXNet Docker Image  
+### Lab 2 - Build an MXNet Docker Image:    
 In this lab, you will build an MXNet docker image using one of the ECS cluster instances which already comes bundled with Docker installed.  There are quite a few dependencies for MXNet, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  MXNet uses SSH as the mechanism for communication between containers, so you'll be generating an SSH key pair to configure public key authentication for secure access.  You can review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it.  
 
 1\. Go to the EC2 Dashboard in the Management Console and click on **Instances** in the left menu.  Select one of the two EC2 instances created by the CloudFormation stack.  If your instances list is cluttered with other instances, apply a filter in the search bar using the tag key **aws:ec2spot:fleet-request-id** and choose the value that matches the **spotFleetName** from your CloudFormation Outputs.  
@@ -112,6 +112,7 @@ $ docker tag mxnet:latest <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i><
 $ docker push <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i></b>.amazonaws.com/<b><i>ecr_repository</i></b>:latest  
 </pre>
 
+
 **Checkpoint**  
 At this point you should have a working MXNet Docker image to deploy with ECS.  If you don't see errors following the commands above, you should be in good shape.  
 
@@ -125,23 +126,25 @@ You can exit the session by simply typing **exit**.
 *TBD - consider adding another optional test - SSH into container* 
 
 
-### Lab 3 - Deploy the MXNet Container with ECS  
-Now that you have an MXNet container ready to go, you will create a task definition to deploy your shiny new container with ECS.  Task definitions specify key parameters used by ECS to run your container.  For example, it specifies which Docker image to deploy, cpu/memory resource requirements, port mappings, volume mappings and more.  Task Definitions can be represented in JSON, so for your convenience, we provide a task definition in the lab 3 folder for you to use.       
+### Lab 3 - Deploy the MXNet Container with ECS:    
+Now that you have an MXNet container ready to go, you will create a Task Definition, which specifies parameters used by ECS to run your container, e.g. Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the params in the Task Definition closely match options passed to a Docker run command.       
 
-*add instructions...*
+1\. Open the EC2 Container Service dashboard and click on **Task Definitions** in the left menu.  
+
+2\. 
 
 **Checkpoint**  
 *add steps to verify successful completion of the lab*  
 ssh to master, check connectivity to secondary
 
-### Lab 4 - Image Classification with MXNet 
+### Lab 4 - Image Classification with MXNet:   
 Now that you have an MXNet container built and deployed with ECS, you can try out an image classification example provided by MXNet to make sure the framework is working properly.  There are two examples you can run through, one for training a model and one for generating a prediction.  Both examples are presented in the form of a Jupyter notebook.  You may have noticed that Jupyter was installed and configured during the creation of the MXNet image.  If you're new to Jupyter, it is essentially a web application that allows you to interactively step through blocks of written code.  The code can be edited by the user as needed or desired, and there is a play button that lets you step through the cells.  Cells that do not code have no effect, so you can hit play to pass through the cell.          
 
-#### Training  
+#### Training:    
 *add instructions*
 
-#### Prediction  
-Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full ImageNet dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is built with a Juypter notebook, so you can interactively walk through the steps. 
+#### Prediction:    
+Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is built with a Juypter notebook, so you can interactively walk through the steps. 
 
 1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo; the password is ***XXXXXXXXX***:  
 http://***ec2_public_dns_name***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
@@ -152,7 +155,6 @@ http://***ec2_public_dns_name***/notebooks/mxnet-notebooks/python/tutorials/pred
 
 **Checkpoint**  
 *add steps to verify successful completion of the lab*  
-
 
 ### Extra Credit Challenges:
 * explore GPUs instances and train using GPUs to see the speed boost
@@ -165,7 +167,7 @@ Congratulations on completing the lab...*or at least giving it a good go*!  This
 
 * * *
 
-## Workshop Cleanup
+## Workshop Cleanup:
 
 1. Delete any manually created resources throughout the labs.
 2. Delete any data files stored on S3 and container images stored in ECR.
@@ -174,34 +176,28 @@ Congratulations on completing the lab...*or at least giving it a good go*!  This
 
 * * *
 
-## Appendix
+## Appendix:  
 
-### Cost  
-Here are estimated costs for running this 2 hour workshop:   
+### Estimated Costs:    
+Here are estimated costs for running this 2 hour workshop.    
 *add cost estimate for EC2 and other*  
 
-### AWS Resources
-Check out these links to learn more about the services used in this workshop  
-- [AWS Services](https://aws.amazon.com/)  
-- [A Cloud Guru self-paced AWS labs](https://acloud.guru/courses)  
+### Learning Resources:  
+Here are additional resources to learn more about AWS, Docker, MXNet.  
 
-https://aws.amazon.com/blogs/compute/powering-your-amazon-ecs-clusters-with-spot-fleet/
+* [Amazon Web Services](https://aws.amazon.com/)  
+* [A Cloud Guru - online self-paced labs](https://acloud.guru/courses)  
+* [Docker documentation](https://docs.docker.com/)  
+* [MXNet](http://mxnet.io/)  
+* [MXNet Examples](http://mxnet.io/tutorials/index.html)  
 
+#### Articles:  
+* [Powering ECS Clusters with Spot Fleet](https://aws.amazon.com/blogs/compute/powering-your-amazon-ecs-clusters-with-spot-fleet/)  
+* [Distributed Deep Learning Made Easy](https://aws.amazon.com/blogs/compute/distributed-deep-learning-made-easy/)
 
-### Docker Resources
-If you're wondering if a container is the same as a VM, you're on the right track, but the truth shall set you free.  Have a look here to learn more about containerization technology and why it's all the rage.  
-- [Docker](https://www.docker.com/)  
 *add links to ECS sessions*  
-
-### Machine Learning / Deep Learning / MXNet Resources 
-If you're wondering how MXNet was able to classify all the Internet cat pics you threw at it, you can learn more about the library and the concepts here.  
-- [MXNet](http://mxnet.io/)  
-- [MXNet Examples](http://mxnet.io/tutorials/index.html)  
 *add link to Werner's email about MXNet and Amazon*
 *add link to MAC401 session*  
-*add links to Coursera classes on ML and neuralnetworks*  
 
-
-https://aws.amazon.com/blogs/compute/distributed-deep-learning-made-easy/
 
 
