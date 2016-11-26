@@ -129,9 +129,9 @@ You can exit the session by simply typing **exit**.
 ### Lab 3 - Deploy the MXNet Container with ECS:    
 Now that you have an MXNet container ready to go, you will create a Task Definition, which specifies parameters used by ECS to run your container, e.g. Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the params in the Task Definition closely match options passed to a Docker run command.       
 
-1\. Open the EC2 Container Service dashboard and click on **Task Definitions** in the left menu.  
+1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
 
-2\. 
+2\. Type "mxnet" for the Task Definition Name,  
 
 **Checkpoint**  
 *add steps to verify successful completion of the lab*  
