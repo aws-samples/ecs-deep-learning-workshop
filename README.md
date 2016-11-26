@@ -16,7 +16,7 @@ The goal is not to go deep on the learning (no pun intended) aspects, but to ill
 These labs are designed to be completed in sequence.  If you are reading this at a live AWS event, the workshop attendants will give you a high level run down of the labs.  Then it's up to you to follow the instructions below to complete the labs.  Don't worry if you're embarking on this journey in the comfort of your office or home, presentation materials can be found in the git repo.
 
 **Lab 1:** Setup the workshop environment on AWS  
-**Lab 2:** Build an MXNet Docker Image
+**Lab 2:** Build an MXNet Docker Image  
 **Lab 3:** Deploy the MXNet Container with ECS  
 **Lab 4:** Image Classification with MXNet  
 
@@ -30,12 +30,12 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
 The command starts after $.  Words that are ***bolded italics*** indicate a value that is unique to your environment.  For example, the ***private\_key.pem*** refers to the private key of an SSH key pair that you've created, and the ***ec2\_public\_DNS\_name*** is a value that is specific to an EC2 instance launched in your account.  
 
 ### Workshop Cleanup:
-This section will appear again below as a reminder because you will be deploying infrastructure on AWS which will have an associated cost.  Fortunately, this workshop should take no more than 2 hours to complete, so costs are minimal.  See the appendix for an estimate of what this workshop should cost to run.    
+This section will appear again below as a reminder because you will be deploying infrastructure on AWS which will have an associated cost.  Fortunately, this workshop should take no more than 2 hours to complete, so costs will be minimal.  See the appendix for an estimate of what this workshop should cost to run.  When you're done with the workshop, follow these steps to make sure everything is cleaned up.  
 
-1. Delete any manually created resources throughout the labs.
-2. Delete any data files stored on S3 and container images stored in ECR.
-3. Delete the CloudFormation stack launched at the beginning of the workshop
-  
+1. Delete any manually created resources throughout the labs. 
+2. Delete any data files stored on S3 and container images stored in ECR.  
+3. Delete the CloudFormation stack launched at the beginning of the workshop. 
+	
 * * * 
 
 ## Let's Begin!  
@@ -72,7 +72,7 @@ If there was an error during the stack creation process, CloudFormation will rol
 ### Lab 2 - Build an MXNet Docker Image  
 In this lab, you will build an MXNet docker image using one of the ECS cluster instances which already comes bundled with Docker installed.  There are quite a few dependencies for MXNet, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  MXNet uses SSH as the mechanism for communication between containers, so you'll be generating an SSH key pair to configure public key authentication for secure access.  You can review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it.  
 
-1\. Go to the EC2 Dashboard in the Management Console and click on **Instances** in the left menu.  Select one of the two EC2 instances created by the CloudFormation stack.  If your instances list is cluttered with other instances, apply a filter in the search bar using the tag key **aws:ec2spot:fleet-request-id** and choose the value that matches the spotFleetName from your CloudFormation Outputs.  
+1\. Go to the EC2 Dashboard in the Management Console and click on **Instances** in the left menu.  Select one of the two EC2 instances created by the CloudFormation stack.  If your instances list is cluttered with other instances, apply a filter in the search bar using the tag key **aws:ec2spot:fleet-request-id** and choose the value that matches the **spotFleetName** from your CloudFormation Outputs.  
 
 ![EC2 Public DNS](/images/ec2-public-dns.png)
 
@@ -88,18 +88,22 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
 3\. Navigate to the lab-2-build/mxnet/ folder to use as our working directory.  
 `$ cd ecs-deep-learning-workshop/lab-2-build/mxnet`
 
-4\. Generate an SSH key pair.  The container build process will configure public key authentication for SSH access to the container.  The reason we do this is because MXNet has the ability to perform distributed training with multiple machines, and one of the mechanisms used in this case is SSH.    
+4\. Generate an SSH key pair.  The container build process will configure public key authentication for SSH access to the container.  The reason we do this is because MXNet has the ability to perform distributed training with multiple machines, and one of the mechanisms used in this case is SSH.  
        
-`$ ssh-keygen -t rsa -b 4096 -f id_rsa
+*Note: you will be prompted to enter a passphrase suing the ssh-keygen command, just leave it blank and press enter.*  
+
+`$ ssh-keygen -t rsa -b 4096 -f id_rsa 
 $ cp -av id_rsa* $HOME/.ssh/`    
 
-5\. Now you're ready to build the Docker image based on the provided Dockerfile.
+5\. Now you're ready to build the Docker image using the provided Dockerfile.
 
 `$ docker build -t mxnet .`  
 
 This process will take about 10-15 minutes because MXNet is being compiled during the build process.  If you're new to Docker, you can take this opportunity to review the Dockerfile to understand what's going on or take a quick break to grab some coffee/tea.  
 
-6\. Once the build process has completed without errors, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  
+6\. Once the build process has completed without errors, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
+
+![ECR URI](/images/ecr-uri.png)  
 
 <pre>
 $ docker tag mxnet:latest <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i></b>.amazonaws.com/<b><i>ecr_repository</i></b>:latest   
