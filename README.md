@@ -60,7 +60,7 @@ In the CloudFormation Dashboard, your stack should show status CREATE\_COMPLETE.
 If there was an error during the stack creation process, CloudFormation will rollback and terminate.  You can investigate and troubleshoot by looking for errors in the Events tab.     
 
 ### Lab 2 - Build an MXNet Container  
-In this lab, you will build an MXNet docker container.  There are quite a few dependencies, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  You can also review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it. 
+In this lab, you will build an MXNet docker container using one of the ECS cluster instances which already comes bundled with the Docker installed.  There are quite a few dependencies for MXNet, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  MXNet uses SSH as the mechanism for communication between containers, so you'll be generating an SSH key pair to configure public key authentication for secure access.  You can review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it.  
 
 1\. You will build the container in one of the EC2 instances from the ECS cluster.  Go to the EC2 Dashboard in the Management Console.  Select one of the EC2 instances created by the CloudFormation stack, and note the Public DNS name. 
 
@@ -69,21 +69,25 @@ In this lab, you will build an MXNet docker container.  There are quite a few de
 SSH into the host  
 `ssh -i <private-key.pem> ec2-user@<ec2-public-DNS-name>`
 
-2\. Once logged into the EC2 instance, install git and clone the workshop github repository.  
-`sudo yum -y install git
-git clone https://github.com/awslabs/ecs-deep-learning-workshop.git`
+2\. Once logged into the EC2 instance, clone the workshop github repository so you can easily access the Dockerfile.  
+`git clone https://github.com/awslabs/ecs-deep-learning-workshop.git`  
 
-3\. You'll use the lab-2-build/mxnet/ folder as our working folder.  
+3\. Navigate to the lab-2-build/mxnet/ folder to use as our working directory.  
 `cd ecs-deep-learning-workshop/lab-2-build/mxnet`
 
 4\. Generate an SSH key pair.  The container build process will configure public key authentication for SSH access to the container.  Later in the workshop, you'll see that training commands will be issued over SSH.       
 `ssh-keygen -t rsa -b 4096 -f id_rsa
 cp -av id_rsa* $HOME/.ssh/`  
 
-5\. Now you're ready to build the Dockerfile.  
+5\. Now you're ready to build the Docker image based on the provided Dockerfile.    
 `docker build -t mxnet .`
 
-[Optional] - store your MXNet container in the created ECR registry or a registry of your choosing.    
+6\. Once the build process has completed, manually run the container to make sure everything looks good.  
+`docker run -ti mxnet bash`
+
+7\. Push the MXNet image to ECR.  You'll use this to deploy the container using ECS in the next lab.  
+``   
+
 
 
 **Checkpoint**  
@@ -157,4 +161,8 @@ If you're wondering how MXNet was able to classify all the Internet cat pics you
 *add link to Werner's email about MXNet and Amazon*
 *add link to MAC401 session*  
 *add links to Coursera classes on ML and neuralnetworks*  
+
+
+https://aws.amazon.com/blogs/compute/distributed-deep-learning-made-easy/
+
 
