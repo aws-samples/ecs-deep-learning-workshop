@@ -117,21 +117,23 @@ $ docker push <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i></b>.amazonaw
 At this point you should have a working MXNet Docker image to deploy with ECS.  If you don't see errors following the commands above, you should be in good shape.  
 
 [Optional] 
-An additional test would be to manually run the MXNet image that you just created in an interactive shell.
+An additional test would be to manually run the MXNet image that you just created with an interactive bash session.  
 
 `$ docker run -ti mxnet bash`  
 
 You can exit the session by simply typing **exit**. 
 
-*TBD - consider adding another optional test - SSH into container* 
-
 
 ### Lab 3 - Deploy the MXNet Container with ECS:    
-Now that you have an MXNet container ready to go, you will create a Task Definition, which specifies parameters used by ECS to run your container, e.g. Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the params in the Task Definition closely match options passed to a Docker run command.       
+Now that you have an MXNet image ready to go, next step is to create a task definition, which specifies parameters used by ECS to run your container, e.g. Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the params in the task definition closely match options passed to a Docker run command.       
 
 1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
 
-2\. Type "mxnet" for the Task Definition Name,  
+2\. First, name your task definition, e.g. "mxnet".  If you create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  Next click on **Add container**. 
+
+3\.   
+
+
 
 **Checkpoint**  
 *add steps to verify successful completion of the lab*  
@@ -144,19 +146,22 @@ Now that you have an MXNet container built and deployed with ECS, you can try ou
 *add instructions*
 
 #### Prediction:    
-Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is built with a Juypter notebook, so you can interactively walk through the steps. 
+Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is built with a Juypter notebook, so you can interactively walk through the example. 
 
 1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo; the password is ***XXXXXXXXX***:  
 http://***ec2_public_dns_name***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
 
-2\. Play through the cells to run through this example.  **IMPORTANT**: In cell 2, the default context is to use gpu, but in this workshop, change this to cpu.  See the following screenshot to see this highlighted; also highlighted in the screenshot is the play button which lets you advance through the cells.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
+2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you run a cell that takes time to process, the number will show an asterisk.  
+
+**IMPORTANT**: In cell 2, the default context is to use gpu, but in the case of this workshop, we're using cpu resources so change the text "gpu" to "cpu".  This is a great feature of this particular framework, which makes it very easy to switch as needed.  See the following screenshot to see this highlighted; also highlighted in the screenshot is the play button which lets you advance through the cells.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
 
 ![Jupyter Notebook - Prediction](/images/jupyter-notebook-predict.png)
 
-**Checkpoint**  
-*add steps to verify successful completion of the lab*  
+3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to how well the model performs.  Remember that Jupyter notebooks let you input your own code and run
 
 ### Extra Credit Challenges:
+At this point, you've run through a couple examples to confirm sample training and prediction tasks are working as expected.  Now it's up to you to use your creativity to take what you've built and expand on it.  
+
 * explore GPUs instances and train using GPUs to see the speed boost
 * explore other MXNet algorithms such as matrix factorization
 
