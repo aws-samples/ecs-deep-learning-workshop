@@ -125,19 +125,25 @@ You can exit the session by simply typing **exit**.
 
 
 ### Lab 3 - Deploy the MXNet Container with ECS:    
-Now that you have an MXNet image ready to go, next step is to create a task definition, which specifies parameters used by ECS to run your container, e.g. Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the params in the task definition closely match options passed to a Docker run command.       
+Now that you have an MXNet image ready to go, next step is to create a task definition, which specifies parameters used by ECS to run your container, e.g. Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the params in the task definition closely match options passed to a Docker run command.  Task definitions can be used to deploy multiple containers that are linked together, for example, an application server and database.  In this workshop, we will focus on deploying a single container.         
 
 1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
 
-2\. First, name your task definition, e.g. "mxnet".  If you create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  Next click on **Add container**. 
+2\. First, name your task definition, e.g. "mxnet".  If you happen to create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  
 
-3\.   
+3\. Next click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet", which is functionally equivalent to the --name option of the Docker run command. This name value can also be used for any container linking.  The image field is the container image that you will be deploying.  The format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  Finallly, set the memory to "2048" and map the host port 80 to the container port 8888.  Port 8888 is the listening port for the Jupter notebook configuration, and we map it to port 80 to reduce running into issues with proxies during the workshop.  You can leave all other fields as default.  Click **Add** to save this configuration and add it to the task defintion.  Click **Create** to complete the task defintion creation step.         
 
+![Task Definition](/images/task-def.png)  
 
+4\. Now that you have a task definition created, you can have ECS deploy an MXNet container to your EC2 cluster using the Run Task option.  On the screen, click on the **Actions** dropdown menu and select **Run Task**.  Choose your ECS Cluster from the dropdown menu.  If you have multiple ECS Clusters in the list, you can find your workshop cluster by referring to the **ecsClusterName** value from the CloudFormation stack Outputs tab.  Keep number of tasks set to 1 and click on **Run Task**.  ECS is now running your MXNet container on an ECS cluster instance with available resources.  If you run multiple tasks, ECS will balance out the tasks across the cluster, so one cluster instance doesn't have a disproportionate number of tasks.  
 
-**Checkpoint**  
-*add steps to verify successful completion of the lab*  
-ssh to master, check connectivity to secondary
+5\. On the Clusters page, you'll see a Tasks tab towards the bottom of the page.  Notice your new task starts in the Pending state.  Click on the refresh button after a little bit to refresh the contents of that tab, and once it is in the Running state, you can test accessing the Jupyter notebook.  In addition to the running state, this tab also identifies which Container Instance the task is running on.  Click on the Container Instance and you'll see the Public DNS of the EC2 instance on the next page.   
+
+![Run Task](/images/task-run.png)  
+
+6\. Open a new web browser tab and load the public DNS name - http://***ec2_public_DNS_name***.  You should see the Jupyter login page.
+
+![Jupyter Login](/images/jupyter-login.png)  
 
 ### Lab 4 - Image Classification with MXNet:   
 Now that you have an MXNet container built and deployed with ECS, you can try out an image classification example provided by MXNet to make sure the framework is working properly.  There are two examples you can run through, one for training a model and one for generating a prediction.  Both examples are presented in the form of a Jupyter notebook.  You may have noticed that Jupyter was installed and configured during the creation of the MXNet image.  If you're new to Jupyter, it is essentially a web application that allows you to interactively step through blocks of written code.  The code can be edited by the user as needed or desired, and there is a play button that lets you step through the cells.  Cells that do not code have no effect, so you can hit play to pass through the cell.          
