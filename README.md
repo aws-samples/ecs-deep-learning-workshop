@@ -165,7 +165,7 @@ http://***ec2_public_dns_name***/notebooks/mxnet-notebooks/python/tutorials/pred
 
 ![Jupyter Notebook - Prediction](/images/jupyter-notebook-predict.png)
 
-3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to how well the model performs.  Remember that Jupyter notebooks let you input your own code and run
+3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.  Remember that Jupyter notebooks let you input your own code in a cell and run it, so feel free to experiment.  
 
 ### Extra Credit Challenges:
 At this point, you've run through a couple examples to confirm sample training and prediction tasks are working as expected.  Now it's up to you to use your creativity to take what you've built and expand on it.  
