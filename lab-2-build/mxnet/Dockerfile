@@ -28,6 +28,8 @@ RUN cd ${WORKSHOPDIR} \
   && git clone https://github.com/dmlc/mxnet.git --recursive \
   && git clone https://github.com/dmlc/mxnet-notebooks.git
 
+COPY train_mnist.ipynb ${WORKSHOPDIR}/mxnet/example/image-classification/train_mnist.ipynb
+
 RUN cd ${WORKSHOPDIR}/mxnet \
   && cp make/config.mk . \
   && echo "USE_CUDA=0" >>config.mk \
@@ -50,13 +52,23 @@ RUN jupyter-notebook --generate-config \
   && sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'sha1:1a7d890154f1:4f89ba21f5bcfb89c0bc2654a36900d62c262e6a'/g" \
     /root/.jupyter/jupyter_notebook_config.py
 
-RUN mkdir -p /var/run/sshd /root/.ssh
+RUN sed -i "/return parser.parse_args()/i\    parser.add_argument('--log_file', type=str, default='train_output.log', help='the name of the log file that we want to log all output to')"  ${WORKSHOPDIR}/mxnet/example/image-classification/train_mnist.py
+RUN sed -i "/return parser.parse_args()/i\    parser.add_argument('--log_dir', type=str, default='/var/log', help='the shared log directory we will be using')" ${WORKSHOPDIR}/mxnet/example/image-classification/train_mnist.py
 
+
+RUN mkdir -p /var/run/sshd /root/.ssh
+ 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+#COPY id_rsa /root/keys/rsa
+#RUN chmod 600 /root/keys/rsa
+
 COPY id_rsa.pub /root/.ssh/authorized_keys
-RUN chmod 600 /root/.ssh/authorized_keys
+#COPY config /root/.ssh/config
+
+RUN chmod 600 /root/.ssh/authorized_keys 
+#RUN eval "$(ssh-agent)" && ssh-add /root/keys/rsa
 
 WORKDIR ${WORKSHOPDIR}
-EXPOSE 22 8888
+EXPOSE 22 8888 9091
 CMD ["/usr/bin/supervisord"]
