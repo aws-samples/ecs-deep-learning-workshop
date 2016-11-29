@@ -57,5 +57,5 @@ RUN sed -i "/return parser.parse_args()/i\    parser.add_argument('--log_file', 
 
 WORKDIR ${WORKSHOPDIR}
 EXPOSE 8888
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
 CMD ["/usr/local/bin/jupyter-notebook", "--no-browser"]
