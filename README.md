@@ -98,8 +98,8 @@ This process will take about 10-15 minutes because MXNet is being compiled durin
 
 `$ docker run -ti mxnet /bin/bash`
 
-You'll notice your prompt has changed to something like this: *root@**2b3b44bd0eed**:~/mxnet#*
-The bolded portion is your container ID.  Note this down because you'll need it later when you want to commit your changes.  
+You'll notice your prompt has changed to: <pre><i>root@<b>2b3b44bd0eed</b>:~/mxnet#</i></pre>
+The bolded portion will be unique and represents your container ID.  Note this down because you'll need it later when you want to commit your changes.  
 
 6\. First let's generate a hashed password using the passwd() method provided by Jupyter.  Start python in interactive mode and run the passwd function to generate the hashed password.  **Note:** Commands are bolded below, and you'll be prompted to enter your password once to set it and again to confirm it.  The output will be a sha1 hash.  Note this down because you'll be adding this to the Jupyter config.  
 
