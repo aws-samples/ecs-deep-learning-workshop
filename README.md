@@ -88,22 +88,39 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
 3\. Navigate to the lab-2-build/mxnet/ folder to use as our working directory.  
 `$ cd ecs-deep-learning-workshop/lab-2-build/mxnet`
 
-4\. Generate an SSH key pair.  The container build process will configure public key authentication for SSH access to the container.  The reason we do this is because MXNet has the ability to perform distributed training with multiple machines, and one of the mechanisms used in this case is SSH.  
-       
-*Note: you will be prompted to enter a passphrase suing the ssh-keygen command, just leave it blank and press enter.*  
-
-<pre>
-$ ssh-keygen -t rsa -b 4096 -f id_rsa  
-$ cp -av id_rsa* $HOME/.ssh/
-</pre>   
-
-5\. Now you're ready to build the Docker image using the provided Dockerfile.
+4\. Build the Docker image using the provided Dockerfile.
 
 `$ docker build -t mxnet .`  
 
 This process will take about 10-15 minutes because MXNet is being compiled during the build process.  If you're new to Docker, you can take this opportunity to review the Dockerfile to understand what's going on or take a quick break to grab some coffee/tea.  
 
-6\. Once the build process has completed without errors, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
+5\. One of the goals of the workshop is to provide an interactive Jupyter notebook for your teams to work with MXNet.  Jupyter runs as a web application on your container and by default does not require a password.  You can add a hashed password to the Jupyter config file to enable one.  You can make this change in an interactive bash shell and commit the change to your local image.  First start the interactive session.
+
+`$ docker run -ti mxnet /bin/bash`
+
+You'll notice your prompt has changed to: <pre><i>root@<b>2b3b44bd0eed</b>:~/mxnet#</i></pre>
+The bolded portion will be unique and represents your container ID.  Note this down because you'll need it later when you want to commit your changes.  
+
+6\. First let's generate a hashed password using the passwd() method provided by Jupyter.  Start python in interactive mode and run the passwd function to generate the hashed password.  **Note:** Commands are bolded below, and you'll be prompted to enter your password once to set it and again to confirm it.  The output will be a sha1 hash.  Note this down because you'll be adding this to the Jupyter config.  
+
+<pre>
+root@2b3b44bd0eed:~/mxnet# <b>python</b>
+Python 2.7.6 (default, Jun 22 2015, 17:58:13) 
+[GCC 4.8.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> <b>from notebook.auth import passwd</b>
+>>> <b>passwd()</b>
+Enter password: 
+Verify password: 
+'sha1:51544180f6e8:4c080dd3fcd90736e21903fbef215a45df63f851'
+>>> <b>exit()</b>
+</pre>  
+
+7\. Use vim to edit ~/.jupyter/jupyter_notebook_config.py 
+
+***STILL IN PROGRESS - will finish tomorrow***
+
+6\. Now that you've committed the change you made to your local docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
 
 ![ECR URI](/images/ecr-uri.png)  
 
