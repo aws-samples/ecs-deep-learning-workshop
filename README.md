@@ -11,7 +11,7 @@ The goal is not to go deep on the learning (no pun intended) aspects, but to ill
 * AWS account - if you don't have one, it's easy and free to [create one](https://aws.amazon.com/)
 * AWS IAM account with elevated privileges allowing you to interact with CloudFormation, IAM, EC2, ECS, ECR, and CloudWatch Logs
 * A workstation or laptop with an ssh client installed, such as [putty](http://www.putty.org/)
-* Familiarity with python, Docker, AWS, and machine learning - not required but a bonus
+* Familiarity with Python, [Jupyter](http://jupyter.org/), [Docker](https://www.docker.com/), AWS, and machine learning - not required but a bonus
 
 ### Labs:  
 These labs are designed to be completed in sequence.  If you are reading this at a live AWS event, the workshop attendants will give you a high level run down of the labs.  Then it's up to you to follow the instructions below to complete the labs.  Don't worry if you're embarking on this journey in the comfort of your office or home- presentation materials can be found in the git repo in the top-level [presentations](https://github.com/awslabs/ecs-deep-learning-workshop/tree/master/presentations) folder.
@@ -46,7 +46,7 @@ There are just not enough [cat pictures on social media](http://mashable.com/cat
 
 Implement MXNet to recognize a variety of images, so you can specifically identify ones of our favorite feline friend!   
 
-Here is the overall architecture of what you will be building throughout this workshop.  By the end of the workshop, you will have the ability to interact directly with the MXNet containers using SSH or Jupyter notebooks.  You will also have the option to create Tasks in ECS which can be run through the management console, CLI or SDKs. 
+Here is the overall architecture of what you will be building throughout this workshop.  By the end of the workshop, you will have the ability to interact directly with the MXNet containers using SSH or [Jupyter notebooks](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html).  You will also have the option to create [Tasks in ECS](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/scheduling_tasks.html) which can be run through the AWS Management Console, [CLI](https://aws.amazon.com/tools/#cli) or [SDKs](https://aws.amazon.com/tools/#sdk). 
 
 ![Overall Architecture](/images/architecture.png)
 
