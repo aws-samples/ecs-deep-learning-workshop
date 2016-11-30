@@ -131,7 +131,9 @@ Once you've made that change, save and close the file.  If vim is not your edito
 
 `root@2b3b44bd0eed:~/mxnet# exit`
 
-9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so (<b>make sure to substitute your container ID in the command</b>):
+9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so:
+
+**make sure to substitute your container ID in the command**
 
 `$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
 
@@ -151,7 +153,7 @@ At this point you should have a working MXNet Docker image to deploy with ECS.  
 
 
 ### Lab 3 - Deploy the MXNet Container with ECS:    
-Now that you have an MXNet image ready to go, next step is to create a task definition, which specifies parameters used by ECS to run your container, e.g. Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the params in the task definition closely match options passed to a Docker run command.  Task definitions can be used to deploy multiple containers that are linked together, for example, an application server and database.  In this workshop, we will focus on deploying a single container.         
+Now that you have an MXNet image ready to go, the next step is to create a task definition. A task defintion specifies parameters and requirements used by ECS to run your container, e.g. the Docker image, cpu/memory resource requirements, host:container port mappings.  You'll notice that the parameters in the task definition closely match options passed to a Docker run command.  Task definitions are very flexible and can be used to deploy multiple containers that are linked together- for example, an application server and database.  In this workshop, we will focus on deploying a single container.         
 
 1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
 
