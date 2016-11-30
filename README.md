@@ -154,6 +154,8 @@ Now that you have an MXNet image ready to go, next step is to create a task defi
 
 1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
 
+*Note: You'll notice there's a task definition already there in the list.  Ignore this until you reach lab 5.*  
+
 2\. First, name your task definition, e.g. "mxnet".  If you happen to create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  
 
 3\. Next click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet", which is functionally equivalent to the --name option of the Docker run command. This name value can also be used for any container linking.  The image field is the container image that you will be deploying.  The format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
@@ -232,18 +234,85 @@ http://***ec2_public_dns_name***/notebooks/mxnet-notebooks/python/tutorials/pred
 
 3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.  Remember that Jupyter notebooks let you input your own code in a cell and run it, so feel free to experiment.    
 
-### Lab 5 - Wrap Image Classification training/prediction in ECS Tasks:
-At this point, you've run through training and prediction examples via command line and using a Juypter notebook.  You can also configure ECS Tasks that will run these 
+### Lab 5 - Wrap Image Classification in an ECS Task:
+At this point, you've run through training and prediction examples using the command line and using a Juypter notebook, respectively.  You can also create task definitions to execute these commands, log the outputs to both S3 and CloudWatch Logs, and terminate the container when the task has completed.  S3 will store a log file containing the outputs from each task run, and CloudWatch Logs will have a log group that continues to append outputs from each task run.  In this lab, you will create additional task definitions to accomplish this.  The steps should be familiar because you've done this in lab 3, only the configuration of the task definition will be slightly different. 
+
+*Note: The task definition that was created by the CloudFormation template is an example of a prediction task that you can refer to for help if you get stuck.*  
 
 
-If you get stuck, we've actually created an ECS Task definition via the CloudFormation template that you ran in lab 1. 
+#### Training task
+
+1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
+
+2\. Name your task definition, e.g. "mxnet-train".  
+
+3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-train".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
+
+Set the memory to "2048".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+
+Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
+
+`/bin/bash, -c`
+
+In the **Command** field, type:  
+
+<pre>
+DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python train_mnist.py | tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
+</pre>  
+
+The command references an OUTPUTBUCKET environment variable, and you can set this in **Env variables**.  Set the key to be "OUTPUTBUCKET" and the value to be the S3 output bucket created by CloudFormation.  You can find the value of your S3 output bucket by going to the CloudFormation stack outputs tab, and used the value for **outputBucketName**.    
+
+![Advanced Configuration - Environment](/images/adv-config-env-train.png)  
+
+Next you'll configure logging to CloudWatch Logs.  Scroll down to the **Log configuration**, select **awslogs** from the *Log driver* dropdown menu.  For *Log options*, set the **awslogs-group** to be the value of **cloudWatchLogsGroupName** from the CloudFormation stack outputs tab.  And type in the region you're currently using, e.g. Ohio would be us-east-2, Oregon would be us-west-2.  Leave the **awslogs-stream-prefix** blank.  
+
+![Advanced Configuration - Log configuration](/images/adv-config-log-train.png)  
+  
+If you are using GPU instances, you will need to check the box for **Privileged** in the **Security** section.  Since we're using CPU instances, leave the box unchecked.          
+
+Click **Add** to save this configuration and add it to the task defintion.  Click **Create** to complete the task defintion creation step.         
+
+4\. Now you're ready to test your task definition.  Select **Run Task** from the **Actions** drop down.  Refresh the task list to confirm the task enters the Running state.  
+
+5\. The task outputs logs to CloudWatch Logs as well as S3.  Open the **CloudWatch** dashboard, and click on **Logs** in the left menu.  Click on the log group, and then click on the log stream that was created.  You should see log output from the task run; since the training task takes some time to complete, you'll see the log output continue to stream in.  Once the task has completed and stopped, check your S3 output bucket, and you should see a log file has been written.  Download the log file and check the content.
+
+
+#### Prediction task
+
+1\. Return to the **Task Definitions** page, and click **Create new Task Definition**.    
+
+2\. Name your task definition, e.g. "mxnet-predict".  
+
+3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-predict".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
+
+Set the memory to "2048".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+
+Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
+
+`/bin/bash, -c`
+
+In the **Command** field, type:  
+
+<pre>
+DATE=`date -Iseconds` && echo \"running predict_imagenet.py $IMAGEURL\" && /usr/local/bin/predict_imagenet.py $IMAGEURL | tee results && echo \"results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt\" && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt && echo \"Task complete!\"
+</pre>  
+
+Similar to the training task, configure the **Env variables** used by the command.  Set "OUTPUTBUCKET" to be the value of **outputBucketName** from the CloudFormation stack outputs tab.  Set "IMAGEURL" to be an URL to an image to be classified.  This can be a URL to any image, but make sure it's an absolute path to an image file and not one that is dynamically generated.      
+
+![Advanced Configuration - Environment](/images/adv-config-env-predict.png)  
+
+Configure the **Log configuration** section as you did for the training task.  Select **awslogs** from the *Log driver* dropdown menu.  For *Log options*, set the **awslogs-group** to be the value of **cloudWatchLogsGroupName** from the CloudFormation stack outputs tab.  And type in the region you're currently using, e.g. Ohio would be us-east-2, Oregon would be us-west-2.  Leave the **awslogs-stream-prefix** blank.    
+  
+If you are using GPU instances, you will need to check the box for **Privileged** in the **Security** section.  Since we're using CPU instances, leave the box unchecked.          
+
+Click **Add** to save this configuration and add it to the task defintion.  Click **Create** to complete the task defintion creation step. 
+
+4\. Run the predict task and check both CloudWatch Logs and the S3 output bucket for related log output.  
 
 
 ### Extra Credit Challenges:
-At this point, you've run through a couple examples to confirm sample training and prediction tasks are working as expected.  Now it's up to you to use your creativity to take what you've built and expand on it.  
-
-* explore GPUs instances and train using GPUs to see the speed boost
-* explore other MXNet algorithms such as matrix factorization
+* An S3 input bucket was created by the CloudFormation template.  Try uploading images to S3 and running the prediction task against those images.
+* Trigger a lambda function when an image is uploaded to the S3 input bucket and have that lambda function call the prediction task.  
 
 * * *
 
@@ -256,8 +325,7 @@ Congratulations on completing the lab...*or at least giving it a good go*!  This
 
 1. Delete any manually created resources throughout the labs.
 2. Delete any data files stored on S3 and container images stored in ECR.
-3. Delete the CloudFormation stack launched at the beginning of the workshop
-
+3. Delete the CloudFormation stack launched at the beginning of the workshop.
 
 * * *
 
