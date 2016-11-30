@@ -53,12 +53,16 @@ Here is the overall architecture of what you will be building throughout this wo
 
 1\. First you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.    
 
-2\. For your convenience, we provide a CloudFormation template to stand up the core infrastructure.  Click on one of these CloudFormation templates to launch your stack:  
+2\. For your convenience, we provide a CloudFormation template to stand up the core infrastructure.  
+
+*Prior to launching a stack, be aware that a few of the resources launched need to be manually deleted when the workshop is over. When finished working, please review the "Workshop Cleanup" section to learn what manual teardown is required by you.*
+
+Click on one of these CloudFormation templates to launch your stack:  
 
 Region | Launch Template
 ------------ | -------------  
-**Ohio** (us-east-2) | [![Launch ECS Deep Learning Stack into Ohio with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/BUCKET/TEMPLATE.YAML)  
-**Oregon** (us-west-2) | [![Launch ECS Deep Learning Stack into Oregon with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/BUCKET/TEMPLATE.YAML)  
+**Ohio** (us-east-2) | [![Launch ECS Deep Learning Stack into Ohio with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/ecs-dl-workshop-us-east-2/ecs-deep-learning-workshop.yaml)  
+**Oregon** (us-west-2) | [![Launch ECS Deep Learning Stack into Oregon with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/ecs-dl-workshop-us-west-2/ecs-deep-learning-workshop.yaml)  
 
 The template will automatically bring you to the CloudFormation Dashboard and start the stack creation process in the specified region.  The template sets up a VPC, IAM roles, S3 bucket, ECR container registry, and an ECS cluster which is comprised of two EC2 instances with the Docker daemon running on each.  In order to keep costs low in the workshop, the EC2 instances are spot instance deployed by Spot Fleet.  The idea is to provide a contained environment, so as not to interfere with any other things in your account.  If you are new to CloudFormation, take the opportunity to review the template during stack creation.  
 
@@ -116,11 +120,23 @@ Verify password:
 >>> <b>exit()</b>
 </pre>  
 
-7\. Use vim to edit ~/.jupyter/jupyter_notebook_config.py 
+7\. Use vim to edit ~/.jupyter/jupyter_notebook_config.py. Find *#c.NotebookApp.password = u''*, delete the leading "#", and insert the sha1 hashed password between the single quotes.  It should look like this when you're done (note, the sha1 below is an example, and you would insert your sha1 hash):  
 
-***STILL IN PROGRESS - will finish tomorrow***
+`c.NotebookApp.password = u'sha1:51544180f6e8:4c080dd3fcd90736e21903fbef215a45df63f851'`  
 
-6\. Now that you've committed the change you made to your local docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
+Once you've made that change, save and close the file.  If vim is not your editor of choice, you can install your preferred editor, e.g. nano, emacs, to edit the file above.   
+
+8\. You can now exit your interacive container session:
+
+`root@2b3b44bd0eed:~/mxnet# exit`  
+
+8\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so: 
+
+`$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
+
+The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
+
+9\. Now that you've committed the change you made to your local docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
 
 ![ECR URI](/images/ecr-uri.png)  
 
@@ -129,16 +145,8 @@ $ docker tag mxnet:latest <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i><
 $ docker push <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i></b>.amazonaws.com/<b><i>ecr_repository</i></b>:latest  
 </pre>
 
-
 **Checkpoint**  
 At this point you should have a working MXNet Docker image to deploy with ECS.  If you don't see errors following the commands above, you should be in good shape.  
-
-[Optional] 
-An additional test would be to manually run the MXNet image that you just created with an interactive bash session.  
-
-`$ docker run -ti mxnet bash`  
-
-You can exit the session by simply typing **exit**. 
 
 
 ### Lab 3 - Deploy the MXNet Container with ECS:    
@@ -213,16 +221,23 @@ As you should be able to tell, logging into a machine, then dropping into a shel
 #### Prediction:    
 Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is built with a Juypter notebook, so you can interactively walk through the example. 
 
-1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo; the password is ***XXXXXXXXX***:  
+1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo; the password is what you configured when you built the image in lab 2.  
 http://***ec2_public_dns_name***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
 
-2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you run a cell that takes time to process, the number will show an asterisk.  
+2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
 
-**IMPORTANT**: In cell 2, the default context is to use gpu, but in the case of this workshop, we're using cpu resources so change the text "gpu" to "cpu".  This is a great feature of this particular framework, which makes it very easy to switch as needed.  See the following screenshot to see this highlighted; also highlighted in the screenshot is the play button which lets you advance through the cells.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
+**IMPORTANT**: In cell 2, the default context is to use gpu, but in the case of this workshop, we're using cpu resources so change the text "gpu" to "cpu".  Being able to switch between using cpu and gpu is a great feature of this library.  See the following screenshot which illustrates where to change from gpu to cpu; also highlighted in the screenshot is the play button which lets you run the cells.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
 
 ![Jupyter Notebook - Prediction](/images/jupyter-notebook-predict.png)
 
-3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.  Remember that Jupyter notebooks let you input your own code in a cell and run it, so feel free to experiment.  
+3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.  Remember that Jupyter notebooks let you input your own code in a cell and run it, so feel free to experiment.    
+
+### Lab 5 - Wrap Image Classification training/prediction in ECS Tasks:
+At this point, you've run through training and prediction examples via command line and using a Juypter notebook.  You can also configure ECS Tasks that will run these 
+
+
+If you get stuck, we've actually created an ECS Task definition via the CloudFormation template that you ran in lab 1. 
+
 
 ### Extra Credit Challenges:
 At this point, you've run through a couple examples to confirm sample training and prediction tasks are working as expected.  Now it's up to you to use your creativity to take what you've built and expand on it.  
