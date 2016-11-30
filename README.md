@@ -68,14 +68,14 @@ Region | Launch Template
 The template will automatically bring you to the CloudFormation Dashboard and start the stack creation process in the specified region.  The template sets up a VPC, IAM roles, S3 bucket, ECR container registry, and an ECS cluster which is comprised of two EC2 instances with the Docker daemon running on each.  In order to keep costs low in the workshop, the EC2 instances are [EC2 Spot instances](https://aws.amazon.com/ec2/spot/) deployed by [Spot Fleet](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet.html).  The idea is to provide a contained environment, so as not to interfere with any other things in your account.  If you are new to [CloudFormation](https://aws.amazon.com/cloudformation/), take the opportunity to review the [template](https://github.com/awslabs/ecs-deep-learning-workshop/blob/master/lab-1-setup/cfn-templates/ecs-deep-learning-workshop.yaml) during stack creation.  
 
 **Checkpoint**  
-Periodically check on the stack creation process in the CloudFormation Dashboard.  If all goes well, your stack should show status CREATE\_COMPLETE.  In the Outputs tab, take note of the **ecrRepository** and **spotFleetName** values; you will need these in the next lab.     
+Periodically check on the stack creation process in the CloudFormation Dashboard.  If all goes well, your stack should show status CREATE\_COMPLETE in roughly 5-10 minutes.  In the Outputs tab, take note of the **ecrRepository** and **spotFleetName** values; you will need these in the next lab.     
 
 ![CloudFormation CREATION\_COMPLETE](/images/cf-complete.png)
 
 If there was an error during the stack creation process, CloudFormation will rollback and terminate.  You can investigate and troubleshoot by looking in the Events tab.  Any errors encountered during stack creation will appear in the event log.      
 
 ### Lab 2 - Build an MXNet Docker Image:    
-In this lab, you will build an MXNet docker image using one of the ECS cluster instances which already comes bundled with Docker installed.  There are quite a few dependencies for MXNet, so for your convenience, we provide a Dockerfile in the lab 2 folder to make sure nothing is missed.  MXNet uses SSH as the mechanism for communication between containers, so you'll be generating an SSH key pair to configure public key authentication for secure access.  You can review the Dockerfile to see what's being installed.  Links to MXNet documentation can be found in the Appendix if you'd like to read more about it.  
+In this lab, you will build an MXNet Docker image using one of the ECS cluster instances which already comes bundled with Docker installed.  There are quite a few dependencies for MXNet, so for your convenience, we have provided a Dockerfile in the lab 2 folder to make sure nothing is missed.  MXNet uses SSH as the mechanism for communication between containers, so you'll be generating an SSH key pair to configure public key authentication for secure access.  You can review the [Dockerfile](https://github.com/awslabs/ecs-deep-learning-workshop/blob/master/lab-2-build/mxnet/Dockerfile) to see what's being installed.  Links to MXNet documentation can be found in the [Appendix](https://github.com/awslabs/ecs-deep-learning-workshop/#appendix) if you'd like to read more about it.  
 
 1\. Go to the EC2 Dashboard in the Management Console and click on **Instances** in the left menu.  Select one of the two EC2 instances created by the CloudFormation stack.  If your instances list is cluttered with other instances, apply a filter in the search bar using the tag key **aws:ec2spot:fleet-request-id** and choose the value that matches the **spotFleetName** from your CloudFormation Outputs.  
 
@@ -93,7 +93,7 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
 3\. Navigate to the lab-2-build/mxnet/ folder to use as our working directory.  
 `$ cd ecs-deep-learning-workshop/lab-2-build/mxnet`
 
-4\. Build the Docker image using the provided Dockerfile.
+4\. Build the Docker image using the provided Dockerfile. <b>Note the trailing period!!<b>
 
 `$ docker build -t mxnet .`  
 
@@ -103,7 +103,7 @@ This process will take about 10-15 minutes because MXNet is being compiled durin
 
 `$ docker run -ti mxnet /bin/bash`
 
-You'll notice your prompt has changed to: <pre><i>root@<b>2b3b44bd0eed</b>:~/mxnet#</i></pre>
+You'll notice your prompt has changed to something like: <pre><i>root@<b>2b3b44bd0eed</b>:~/mxnet#</i></pre>
 The bolded portion will be unique and represents your container ID.  Note this down because you'll need it later when you want to commit your changes.  
 
 6\. First let's generate a hashed password using the passwd() method provided by Jupyter.  Start python in interactive mode and run the passwd function to generate the hashed password.  **Note:** Commands are bolded below, and you'll be prompted to enter your password once to set it and again to confirm it.  The output will be a sha1 hash.  Note this down because you'll be adding this to the Jupyter config.  
@@ -131,13 +131,13 @@ Once you've made that change, save and close the file.  If vim is not your edito
 
 `root@2b3b44bd0eed:~/mxnet# exit`  
 
-8\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so: 
+9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so <b>(remember to substitute your container ID in the command!)</b>:
 
-`$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
+`$ docker commit -m "added password for Jupyter notebook" -a "John Smith" <b>2b3b44bd0eed</b> mxnet`
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
 
-9\. Now that you've committed the change you made to your local docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
+10\. Now that you've committed the change you made to your local docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
 
 ![ECR URI](/images/ecr-uri.png)  
 
