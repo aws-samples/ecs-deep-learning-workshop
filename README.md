@@ -168,7 +168,7 @@ Finallly, set the memory to "2048" and map the host port 80 to the container por
 Now that you have an MXNet container built and deployed with ECS, you can try out an image classification example provided by MXNet to make sure the framework is working properly.  There are two examples you can run through, one for training a model and one for generating a prediction.  Both examples are presented in the form of a Jupyter notebook.  You may have noticed that Jupyter was installed and configured during the creation of the MXNet image.  If you're new to Jupyter, it is essentially a web application that allows you to interactively step through blocks of written code.  The code can be edited by the user as needed or desired, and there is a play button that lets you step through the cells.  Cells that do not code have no effect, so you can hit play to pass through the cell.          
 
 #### Training:    
-In the mxnet example for training an mnist model, there is a python file that runs the training. You will SSH into the same host that already has Jupyter running that you found in step 5 of lab 3, connect to a specific container, and finally run the training command.
+In the MXNet example for training an Mnist model, there is a python file that runs the training. You will SSH into the same host that already has Jupyter running that you found in step 5 of lab 3, connect to a specific container, and finally run the training command.
 
 First, SSH into the instance:
 <pre>
@@ -194,6 +194,18 @@ $ python train_mnist.py
 </pre>
 
 You will start to see output right away. It will look like:
+<pre>
+INFO:root:Start training with [cpu(0)]
+INFO:root:Epoch[0] Batch [100]	Speed: 13736.09 samples/sec	Train-accuracy=0.782969
+INFO:root:Epoch[0] Batch [200]	Speed: 12799.08 samples/sec	Train-accuracy=0.910000
+INFO:root:Epoch[0] Batch [300]	Speed: 13594.84 samples/sec	Train-accuracy=0.926094
+INFO:root:Epoch[0] Batch [400]	Speed: 13775.83 samples/sec	Train-accuracy=0.933594
+INFO:root:Epoch[0] Batch [500]	Speed: 13732.46 samples/sec	Train-accuracy=0.937656
+INFO:root:Epoch[0] Batch [600]	Speed: 13788.14 samples/sec	Train-accuracy=0.941719
+INFO:root:Epoch[0] Batch [700]	Speed: 13735.79 samples/sec	Train-accuracy=0.937813
+INFO:root:Epoch[0] Batch [800]	Speed: 13789.07 samples/sec	Train-accuracy=0.944531
+INFO:root:Epoch[0] Batch [900]	Speed: 13754.83 samples/sec	Train-accuracy=0.953750
+</pre>
 
 As you should be able to tell, logging into a machine, then dropping into a shell onto a container isn't the best process to do all of this, and it's very manual. For the prediction section, we will show you a more UI based interactive way of running some commands.
 
