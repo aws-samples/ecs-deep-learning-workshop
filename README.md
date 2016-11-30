@@ -90,7 +90,7 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
 2\. Once logged into the EC2 instance, clone the workshop github repository so you can easily access the Dockerfile.  
 `$ git clone https://github.com/awslabs/ecs-deep-learning-workshop.git`  
 
-3\. Navigate to the lab-2-build/mxnet/ folder to use as our working directory.  
+3\. Navigate to the lab-2-build/mxnet/ folder to use as your working directory.  
 `$ cd ecs-deep-learning-workshop/lab-2-build/mxnet`
 
 4\. Build the Docker image using the provided Dockerfile. <b>Note the trailing period!!</b>
@@ -131,7 +131,7 @@ Once you've made that change, save and close the file.  If vim is not your edito
 
 `root@2b3b44bd0eed:~/mxnet# exit`
 
-9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so (make sure to substitute your container ID in the command!):
+9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so (<b>make sure to substitute your container ID in the command</b>):
 
 `$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
 
