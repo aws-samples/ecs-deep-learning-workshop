@@ -159,9 +159,9 @@ Now that you have an MXNet image ready to go, the next step is to create a task 
 
 2\. First, name your task definition, e.g. "mxnet".  If you happen to create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  
 
-3\. Next click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet", which is functionally equivalent to the --name option of the Docker run command. This name value can also be used for any container linking.  The image field is the container image that you will be deploying.  The format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
+3\. Next click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet", which is functionally equivalent to the "--name" option of the Docker run command. This name value can also be used for any container linking.  The image field is the container image that you will be deploying.  The format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
 
-Finallly, set the memory to "2048" and map the host port 80 to the container port 8888.  Port 8888 is the listening port for the Jupter notebook configuration, and we map it to port 80 to reduce running into issues with proxies during the workshop.  You can leave all other fields as default.  Click **Add** to save this configuration and add it to the task defintion.  Click **Create** to complete the task defintion creation step.         
+Finallly, set the memory to "2048" and map the host port 80 to the container port 8888.  Port 8888 is the listening port for the Jupter notebook configuration, and we map it to port 80 to reduce running into issues with proxies or firewalls blocking port 8888 during the workshop.  You can leave all other fields as default.  Click **Add** to save this configuration and add it to the task defintion.  Click **Create** to complete the task defintion creation step.         
 
 ![Task Definition](/images/task-def.png)  
 
