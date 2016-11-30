@@ -131,9 +131,7 @@ Once you've made that change, save and close the file.  If vim is not your edito
 
 `root@2b3b44bd0eed:~/mxnet# exit`
 
-9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so:
-
-**make sure to substitute your container ID in the command**
+9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, *making sure to substitute your container ID in the command*:
 
 `$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
 
