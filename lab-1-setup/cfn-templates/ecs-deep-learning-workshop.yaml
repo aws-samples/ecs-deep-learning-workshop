@@ -61,14 +61,16 @@ Resources:
       ContainerDefinitions:
       - Command: ['DATE=`date -Iseconds` && echo "running predict_imagenet.py $IMAGEURL"
             && /usr/local/bin/predict_imagenet.py $IMAGEURL | tee results && echo
-            "results being written to s3://$OUTPUTBUCKET/results.$HOSTNAME.$DATE"
-            && aws s3 cp results s3://$OUTPUTBUCKET/results.$HOSTNAME.$DATE && echo
-            "Task complete!"']
+            "results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt"
+            && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt
+            && echo "Task complete!"']
         EntryPoint: [/bin/bash, -c]
         Environment:
         - {Name: IMAGEURL, Value: 'https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg'}
         - Name: OUTPUTBUCKET
           Value: {Ref: outputBucket}
+        - Name: AWS_DEFAULT_REGION
+          Value: {Ref: 'AWS::Region'}
         Image:
           Fn::Join:
           - ''
