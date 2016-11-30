@@ -2,7 +2,7 @@
   
   
 ## Overview:
-Deep Learning (DL) is an implementation of Machine Learning (ML) that uses neural networks to solve difficult problems such as image recognition, sentiment analysis and recommendations.  Neural networks simulate the functions of the brain where artificial neurons work in concert to detect patterns in data.  This allows deep learning algorithms to classify, predict and recommend with a high degree of accuracy as more data is trained in the network.  DL algorithms generally operate with a high degree of parallelism and is computationally intense.  As a result, emerging deep learning libraries, frameworks, and platforms allow for data and model parallelization and can leverage advancements in GPU technology for improved performance.  
+[Deep Learning (DL)](https://en.wikipedia.org/wiki/Deep_learning) is an implementation of [Machine Learning (ML)](https://en.wikipedia.org/wiki/Machine_learning) that uses neural networks to solve difficult problems such as image recognition, sentiment analysis and recommendations.  Neural networks simulate the functions of the brain where artificial neurons work in concert to detect patterns in data.  This allows deep learning algorithms to classify, predict and recommend with a high degree of accuracy as more data is trained in the network.  DL algorithms generally operate with a high degree of parallelism and is computationally intense.  As a result, emerging deep learning libraries, frameworks, and platforms allow for data and model parallelization and can leverage advancements in GPU technology for improved performance.  
 This workshop will walk you through the deployment of a deep learning library called [MXNet](http://mxnet.io) on AWS using Docker containers.  Containers provide isolation, portability and repeatability, so your developers can easily spin up an environment and start building without the heavy lifting.  
 
 The goal is not to go deep on the learning (no pun intended) aspects, but to illustrate how easy it is to deploy your deep learning environment on AWS and use the same tools to scale your resources as needed.  
@@ -10,6 +10,7 @@ The goal is not to go deep on the learning (no pun intended) aspects, but to ill
 ### Requirements:  
 * AWS account - if you don't have one, it's easy and free to [create one](https://aws.amazon.com/)
 * AWS IAM account with elevated privileges allowing you to interact with CloudFormation, IAM, EC2, ECS, ECR, and CloudWatch Logs
+* A workstation or laptop with an ssh client installed, such as [putty](http://www.putty.org/)
 * Familiarity with python, Docker, AWS, and machine learning - not required but a bonus
 
 ### Labs:  
