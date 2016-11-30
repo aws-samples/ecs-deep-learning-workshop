@@ -131,13 +131,13 @@ Once you've made that change, save and close the file.  If vim is not your edito
 
 `root@2b3b44bd0eed:~/mxnet# exit`
 
-9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, *making sure to substitute your container ID in the command*:
+9\. At this point, you've edited the container, and in order for your changes to persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, **making sure to substitute your container ID in the command**:
 
 `$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
 
-10\. Now that you've committed the change you made to your local docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
+10\. Now that you've committed the change you made to your local Docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
 
 ![ECR URI](/images/ecr-uri.png)  
 
