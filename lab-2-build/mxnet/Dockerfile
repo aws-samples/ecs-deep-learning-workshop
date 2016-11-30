@@ -21,6 +21,8 @@ RUN apt-get -y install \
 
 RUN pip install dumb-init
 
+RUN pip install awscli
+
 ENV WORKSHOPDIR /root/ecs-deep-learning-workshop
 
 RUN mkdir ${WORKSHOPDIR}

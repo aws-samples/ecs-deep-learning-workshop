@@ -63,4 +63,6 @@ def predict(filename, mod, synsets):
   for i in a[0:5]:
     print('probability=%f, class=%s' %(prob[i], synsets[i]))
 
-predict(get_image(url), mod, synsets)
+results = predict(get_image(url), mod, synsets)
+print(url)
+print(results)

@@ -16,7 +16,10 @@ Mappings:
     us-west-1: {AMI: ami-9fadf8ff}
     us-west-2: {AMI: ami-7abc111a}
 Outputs:
-  ecrRepository:
+  cloudWatchLogsGroupName:
+    Description: Name of the CloudWatch Logs Group
+    Value: {Ref: cloudWatchLogsGroup}
+  ecrRepositoryName:
     Description: The name of the ECR Repository
     Value: {Ref: ecrRepository}
   ecsClusterName:
@@ -43,6 +46,9 @@ Resources:
       InternetGatewayId: {Ref: internetGateway}
       VpcId: {Ref: vpc}
     Type: AWS::EC2::VPCGatewayAttachment
+  cloudWatchLogsGroup:
+    Properties: {RetentionInDays: 7}
+    Type: AWS::Logs::LogGroup
   ecrRepository: {Type: 'AWS::ECR::Repository'}
   ecsCluster: {Type: 'AWS::ECS::Cluster'}
   inputBucket: {Type: 'AWS::S3::Bucket'}
@@ -50,6 +56,38 @@ Resources:
     DependsOn: [vpc]
     Type: AWS::EC2::InternetGateway
   outputBucket: {Type: 'AWS::S3::Bucket'}
+  predictTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command: ['DATE=`date -Iseconds` && echo "running predict_imagenet.py $IMAGEURL"
+            && /usr/local/bin/predict_imagenet.py $IMAGEURL | tee results && echo
+            "results being written to s3://$OUTPUTBUCKET/results.$HOSTNAME.$DATE"
+            && aws s3 cp results s3://$OUTPUTBUCKET/results.$HOSTNAME.$DATE && echo
+            "Task complete!"']
+        EntryPoint: [/bin/bash, -c]
+        Environment:
+        - {Name: IMAGEURL, Value: 'https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg'}
+        - Name: OUTPUTBUCKET
+          Value: {Ref: outputBucket}
+        Image:
+          Fn::Join:
+          - ''
+          - - {Ref: 'AWS::AccountId'}
+            - .dkr.ecr.
+            - {Ref: 'AWS::Region'}
+            - .amazonaws.com/
+            - {Ref: ecrRepository}
+            - :latest
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group: {Ref: cloudWatchLogsGroup}
+            awslogs-region: {Ref: 'AWS::Region'}
+            awslogs-stream-prefix: predict_imagenet
+        Memory: '2048'
+        Name: ecs-deep-learning-workshop
+        Privileged: 'true'
+    Type: AWS::ECS::TaskDefinition
   publicRoute:
     DependsOn: [publicRouteTable, attachGateway]
     Properties:
@@ -177,6 +215,9 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
+                /etc/ecs/ecs.config
+
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
                 mkdir /home/ec2-user/.docker
@@ -225,6 +266,9 @@ Resources:
                 yum -y install aws-cli git
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
+                /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -275,6 +319,9 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
+                /etc/ecs/ecs.config
+
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
                 mkdir /home/ec2-user/.docker
@@ -323,6 +370,9 @@ Resources:
                 yum -y install aws-cli git
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
+                /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -373,6 +423,9 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
+                /etc/ecs/ecs.config
+
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
                 mkdir /home/ec2-user/.docker
@@ -421,6 +474,9 @@ Resources:
                 yum -y install aws-cli git
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
+
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
+                /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -476,9 +532,40 @@ Resources:
           Principal:
             Service: [ec2.amazonaws.com]
         Version: 2012-10-17
-      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role',
-        'arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser']
+      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role']
       Path: /
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action: s3:ListBucket
+            Effect: Allow
+            Resource:
+              Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - {Ref: outputBucket}
+          - Action: ['s3:PutObject', 's3:GetObject', 's3:DeleteObject']
+            Effect: Allow
+            Resource:
+              Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - {Ref: outputBucket}
+                - /*
+          - Action: ['ecr:DescribeRepositories', 'ecr:ListImages', 'ecr:InitiateLayerUpload',
+              'ecr:UploadLayerPart', 'ecr:CompleteLayerUpload', 'ecr:PutImage']
+            Effect: Allow
+            Resource:
+              Fn::Join:
+              - ''
+              - - 'arn:aws:ecr:'
+                - {Ref: 'AWS::Region'}
+                - ':'
+                - {Ref: 'AWS::AccountId'}
+                - :repository/
+                - {Ref: ecrRepository}
+          Version: '2012-10-17'
+        PolicyName: ecs-deep-learning-workshop-role
     Type: AWS::IAM::Role
   spotFleetRole:
     Properties:
