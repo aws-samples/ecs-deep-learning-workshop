@@ -168,7 +168,35 @@ Finallly, set the memory to "2048" and map the host port 80 to the container por
 Now that you have an MXNet container built and deployed with ECS, you can try out an image classification example provided by MXNet to make sure the framework is working properly.  There are two examples you can run through, one for training a model and one for generating a prediction.  Both examples are presented in the form of a Jupyter notebook.  You may have noticed that Jupyter was installed and configured during the creation of the MXNet image.  If you're new to Jupyter, it is essentially a web application that allows you to interactively step through blocks of written code.  The code can be edited by the user as needed or desired, and there is a play button that lets you step through the cells.  Cells that do not code have no effect, so you can hit play to pass through the cell.          
 
 #### Training:    
-*add instructions*
+In the mxnet example for training an mnist model, there is a python file that runs the training. You will SSH into the same host that already has Jupyter running that you found in step 5 of lab 3, connect to a specific container, and finally run the training command.
+
+First, SSH into the instance:
+<pre>
+$ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b>
+</pre>
+
+Once logged in, find the container to connect to by running:
+<pre>
+$ docker ps
+</pre>
+
+On the left hand side, you'll find two containers that are running. One for our mxnet container, and one for the amazon-ecs-agent. Note down the CONTAINER_ID of the mxnet image as connect into this specific container. To drop into a shell, execute the /bin/bash command like this:
+
+<pre>
+$ docker exec -it <b><i>CONTAINER_ID</i></b> /bin/bash
+</pre>
+
+Now that you're in the container, you can feel free to navigate around. It should look very similar compared to what you saw in lab 2. Once you're ready, navigate to /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ and run train_mnist.py
+
+<pre>
+$ cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/
+$ python train_mnist.py
+</pre>
+
+You will start to see output right away. It will look like:
+
+As you should be able to tell, logging into a machine, then dropping into a shell onto a container isn't the best process to do all of this, and it's very manual. For the prediction section, we will show you a more UI based interactive way of running some commands.
+
 
 #### Prediction:    
 Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is built with a Juypter notebook, so you can interactively walk through the example. 
