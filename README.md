@@ -42,7 +42,7 @@ This section will appear again below as a reminder because you will be deploying
 ## Let's Begin!  
 
 ### Your Challenge:  
-There are just not enough cat picturs on social media these days, to the point where it would be amazing to have a social network dedicated to devoted cat lovers around the world.  Problem is, how do you make sure images uploaded to this niche network are cat related.  Image classification to the rescue!  
+There are just not enough cat pictures on social media these days, to the point where it would be amazing to have a social network dedicated to devoted cat lovers around the world.  The problem is, how do you make sure images uploaded to this niche network are cat related?  Image classification to the rescue!  
 
 Implement MXNet to recognize a variety of images, so you can specifically identify ones of our favorite feline friend!   
 
