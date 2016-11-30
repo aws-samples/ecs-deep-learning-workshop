@@ -276,6 +276,8 @@ Click **Add** to save this configuration and add it to the task defintion.  Clic
 
 5\. The task outputs logs to CloudWatch Logs as well as S3.  Open the **CloudWatch** dashboard, and click on **Logs** in the left menu.  Click on the log group, and then click on the log stream that was created.  You should see log output from the task run; since the training task takes some time to complete, you'll see the log output continue to stream in.  Once the task has completed and stopped, check your S3 output bucket, and you should see a log file has been written.  Download the log file and check the content.
 
+![CloudWatch Logs](/images/cw-logs.png)  
+
 
 #### Prediction task
 
