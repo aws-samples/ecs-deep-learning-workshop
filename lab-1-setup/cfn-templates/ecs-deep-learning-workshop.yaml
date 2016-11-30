@@ -16,6 +16,9 @@ Mappings:
     us-west-1: {AMI: ami-9fadf8ff}
     us-west-2: {AMI: ami-7abc111a}
 Outputs:
+  awsRegionName:
+    Description: The name of the AWS Region your template was launched in
+    Value: {Ref: 'AWS::Region'}
   cloudWatchLogsGroupName:
     Description: Name of the CloudWatch Logs Group
     Value: {Ref: cloudWatchLogsGroup}
