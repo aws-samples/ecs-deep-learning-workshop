@@ -129,11 +129,11 @@ Once you've made that change, save and close the file.  If vim is not your edito
 
 8\. You can now exit your interacive container session:
 
-`root@2b3b44bd0eed:~/mxnet# exit`  
+`root@2b3b44bd0eed:~/mxnet# exit`
 
-9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so <b>(remember to substitute your container ID in the command!)</b>:
+9\. At this point, you've edited the container, and in order for your changes persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so (make sure to substitute your container ID in the command!):
 
-`$ docker commit -m "added password for Jupyter notebook" -a "John Smith" <b>2b3b44bd0eed</b> mxnet`
+`$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
 
