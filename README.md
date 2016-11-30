@@ -93,7 +93,7 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
 3\. Navigate to the lab-2-build/mxnet/ folder to use as our working directory.  
 `$ cd ecs-deep-learning-workshop/lab-2-build/mxnet`
 
-4\. Build the Docker image using the provided Dockerfile. <b>Note the trailing period!!<b>
+4\. Build the Docker image using the provided Dockerfile. <b>Note the trailing period!!</b>
 
 `$ docker build -t mxnet .`  
 
