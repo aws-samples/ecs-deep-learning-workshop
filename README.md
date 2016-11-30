@@ -9,11 +9,11 @@ The goal is not to go deep on the learning (no pun intended) aspects, but to ill
 
 ### Requirements:  
 * AWS account - if you don't have one, it's easy and free to [create one](https://aws.amazon.com/)
-* IAM account with elevated privileges allowing you to interact with IAM, EC2, ECS, ECR
-* Familiarity with python, Docker, AWS, machine learning - not required but a bonus
+* AWS IAM account with elevated privileges allowing you to interact with CloudFormation, IAM, EC2, ECS, ECR, and CloudWatch Logs
+* Familiarity with python, Docker, AWS, and machine learning - not required but a bonus
 
 ### Labs:  
-These labs are designed to be completed in sequence.  If you are reading this at a live AWS event, the workshop attendants will give you a high level run down of the labs.  Then it's up to you to follow the instructions below to complete the labs.  Don't worry if you're embarking on this journey in the comfort of your office or home, presentation materials can be found in the git repo.
+These labs are designed to be completed in sequence.  If you are reading this at a live AWS event, the workshop attendants will give you a high level run down of the labs.  Then it's up to you to follow the instructions below to complete the labs.  Don't worry if you're embarking on this journey in the comfort of your office or home- presentation materials can be found in the git repo in the top-level presentations folder.
 
 **Lab 1:** Setup the workshop environment on AWS  
 **Lab 2:** Build an MXNet Docker Image  
