@@ -133,7 +133,7 @@ Once you've made that change, save and close the file.
 
 9\. At this point, you've edited the container, and in order for your changes to persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, **making sure to substitute your container ID in the command**:
 
-`$ docker commit -m "added password for Jupyter notebook" -a "John Smith" 2b3b44bd0eed mxnet`
+`$ docker commit -m "added password for Jupyter notebook" -a "<your_name>" <your_container_id> mxnet`
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
 
@@ -147,7 +147,9 @@ $ docker push <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i></b>.amazonaw
 </pre>
 
 **Checkpoint**  
-At this point you should have a working MXNet Docker image to deploy with ECS.  If you don't see errors following the commands above, you should be in good shape.  
+Note that you did not need to authenticate docker with ECR because the [Amazon ECR Credential Helper](https://github.com/awslabs/amazon-ecr-credential-helper) has been installed and configured for you on the EC2 instance.
+
+At this point you should have a working MXNet Docker image stored in an ECR repository and ready to deploy with ECS.
 
 
 ### Lab 3 - Deploy the MXNet Container with ECS:    
