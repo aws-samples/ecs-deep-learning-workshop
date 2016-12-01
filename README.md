@@ -244,7 +244,7 @@ INFO:root:Epoch[0] Batch [800]	Speed: 13789.07 samples/sec	Train-accuracy=0.9445
 INFO:root:Epoch[0] Batch [900]	Speed: 13754.83 samples/sec	Train-accuracy=0.953750
 </pre>
 
-As you should be able to tell, logging into a machine, then dropping into a shell onto a container isn't the best process to do all of this, and it's very manual. For the prediction section, we will show you a more interactive method of running commands.
+As you should be able to tell, logging into a machine, then dropping into a shell onto a container isn't the best process to do all of this, and it's very manual. In the prediction section, we will show you a more interactive method of running commands.
 
 
 #### Prediction:
