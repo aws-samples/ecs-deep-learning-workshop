@@ -55,5 +55,4 @@ RUN jupyter-notebook --generate-config \
 
 WORKDIR ${WORKSHOPDIR}
 EXPOSE 8888
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["/usr/local/bin/jupyter-notebook", "--no-browser"]
+CMD ["/usr/local/bin/dumb-init", "/usr/local/bin/jupyter-notebook", "--no-browser"]
