@@ -108,51 +108,7 @@ $ docker build -t mxnet .
 
 This process will take about 10-15 minutes because MXNet is being compiled during the build process.  If you're new to Docker, you can take this opportunity to review the Dockerfile to understand what's going on or take a quick break to grab some coffee/tea.  
 
-5\. One of the goals of the workshop is to provide an interactive Jupyter notebook for your teams to work with MXNet.  Jupyter runs as a web application on your container and by default does not require a password.  You can add a hashed password to the Jupyter config file to enable one.  You can make this change in an interactive bash shell and commit the change to your local image.  First start the interactive session.
-
-<pre>
-$ docker run -ti mxnet /bin/bash
-</pre>
-
-You'll notice your prompt has changed to something like: <pre><i>root@<b>2b3b44bd0eed</b>:~/mxnet#</i></pre>
-The bolded portion will be unique and represents your container ID.  Note this down because you'll need it later when you want to commit your changes.  
-
-6\. First let's generate a hashed password using the passwd() method provided by Jupyter.  Start python in interactive mode and run the passwd function to generate the hashed password.  **Note:** Commands are bolded below, and you'll be prompted to enter your password once to set it and again to confirm it.  The output will be a sha1 hash.  Note this down because you'll be adding this to the Jupyter config.  
-
-<pre>
-root@2b3b44bd0eed:~/mxnet# <b>python</b>
-Python 2.7.6 (default, Jun 22 2015, 17:58:13) 
-[GCC 4.8.2] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
->>> <b>from notebook.auth import passwd</b>
->>> <b>passwd()</b>
-Enter password: 
-Verify password: 
-'sha1:51544180f6e8:4c080dd3fcd90736e21903fbef215a45df63f851'
->>> <b>exit()</b>
-</pre>  
-
-7\. Use nano (or your favorite editor such as vi or emacs) to edit ~/.jupyter/jupyter_notebook_config.py. Find *#c.NotebookApp.password = u''*, delete the leading "#", and insert the sha1 hashed password between the single quotes.  It should look like this when you're done (note, the sha1 below is an example, and you would insert your sha1 hash):  
-
-`c.NotebookApp.password = u'sha1:51544180f6e8:4c080dd3fcd90736e21903fbef215a45df63f851'`  
-
-Once you've made that change, save and close the file.
-
-8\. You can now exit your interactive container session:
-
-<pre>
-root@2b3b44bd0eed:~/mxnet# exit
-</pre>
-
-9\. At this point, you've edited the container, and in order for your changes to persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, **making sure to substitute your container ID in the command**:
-
-<pre>
-$ docker commit -m "added password for Jupyter notebook" -a "<b><i>YOUR_NAME</i></b>" <b><i>CONTAINER_ID</b></i> mxnet
-</pre>
-
-The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
-
-10\. Now that you've committed the change you made to your local Docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
+5\. Now that you've built your local Docker image, you'll need to tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
 
 ![ECR URI](/images/ecr-uri.png)  
 
@@ -252,8 +208,11 @@ Since training a model can be resource intensive and a lengthy process, you will
 
 If you're new to Jupyter, it is essentially a web application that allows you to interactively step through blocks of written code.  The code can be edited by the user as needed or desired, and there is a play button that lets you step through the cells.  Cells that do not code have no effect, so you can hit play to pass through the cell.  
  
-1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo; the password is what you configured when you built the image in lab 2.  
+1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo:
+
+<pre>
 http://***EC2_PUBLIC_DNS_NAME***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
+</pre>
 
 2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
 
