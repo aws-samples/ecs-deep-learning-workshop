@@ -53,7 +53,13 @@ Here is the overall architecture of what you will be building throughout this wo
 
 ### Lab 1 - Set up the Workshop Environment on AWS:    
 
-1\. First you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.    
+1\. First you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.  
+
+If you're using linux or mac, change the permissions of the .pem file to be less open.  
+
+<pre>$ chmod 400 <b><i>PRIVATE_KEY.PEM</i></b></pre>
+
+If you're on windows you'll need to convert the .pem file to .ppk to work with putty.  Here is a link to instructions for the file conversion - [Connecting to Your Linux Instance from Windows Using PuTTY](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/putty.html)
 
 2\. For your convenience, we provide a CloudFormation template to stand up the core infrastructure.  
 
