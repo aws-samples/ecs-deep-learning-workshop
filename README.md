@@ -350,7 +350,7 @@ Congratulations on completing the lab...*or at least giving it a good go*!  This
 ## Appendix:  
 
 ### Estimated Costs:    
-The estimated cost for running this 2.5 hour workshop is $0.25.
+The estimated cost for running this 2.5 hour workshop will be less than $5.
 
 ### Learning Resources:  
 Here are additional resources to learn more about AWS, Docker, MXNet.  
@@ -364,10 +364,6 @@ Here are additional resources to learn more about AWS, Docker, MXNet.
 #### Articles:  
 * [Powering ECS Clusters with Spot Fleet](https://aws.amazon.com/blogs/compute/powering-your-amazon-ecs-clusters-with-spot-fleet/)  
 * [Distributed Deep Learning Made Easy](https://aws.amazon.com/blogs/compute/distributed-deep-learning-made-easy/)
-
-*add links to ECS sessions*  
-*add link to Werner's email about MXNet and Amazon*
-*add link to MAC401 session*  
 
 
 
