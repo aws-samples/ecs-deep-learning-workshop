@@ -84,7 +84,7 @@ In this lab, you will build an MXNet Docker image using one of the ECS cluster i
 Once you've selected one of the provisioned EC2 instances, note the Public DNS Name and SSH into the instance.  
 
 <pre>
-$ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b>
+$ ssh -i <b><i>PRIVATE_KEY.PEM</i></b> ec2-user@<b><i>EC2_PUBLIC_DNS_NAME</i></b>
 </pre>
 
 2\. Once logged into the EC2 instance, clone the workshop github repository so you can easily access the Dockerfile.  
@@ -95,13 +95,17 @@ $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b
 
 4\. Build the Docker image using the provided Dockerfile. <b>Note the trailing period!!</b>
 
-`$ docker build -t mxnet .`  
+<pre>
+$ docker build -t mxnet .
+</pre>
 
 This process will take about 10-15 minutes because MXNet is being compiled during the build process.  If you're new to Docker, you can take this opportunity to review the Dockerfile to understand what's going on or take a quick break to grab some coffee/tea.  
 
 5\. One of the goals of the workshop is to provide an interactive Jupyter notebook for your teams to work with MXNet.  Jupyter runs as a web application on your container and by default does not require a password.  You can add a hashed password to the Jupyter config file to enable one.  You can make this change in an interactive bash shell and commit the change to your local image.  First start the interactive session.
 
-`$ docker run -ti mxnet /bin/bash`
+<pre>
+$ docker run -ti mxnet /bin/bash
+</pre>
 
 You'll notice your prompt has changed to something like: <pre><i>root@<b>2b3b44bd0eed</b>:~/mxnet#</i></pre>
 The bolded portion will be unique and represents your container ID.  Note this down because you'll need it later when you want to commit your changes.  
@@ -129,11 +133,15 @@ Once you've made that change, save and close the file.
 
 8\. You can now exit your interacive container session:
 
-`root@2b3b44bd0eed:~/mxnet# exit`
+<pre>
+root@2b3b44bd0eed:~/mxnet# exit
+</pre>
 
 9\. At this point, you've edited the container, and in order for your changes to persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, **making sure to substitute your container ID in the command**:
 
-<pre>$ docker commit -m "added password for Jupyter notebook" -a <b><i>"<YOUR_NAME>" <CONTAINER_ID></b></i> mxnet</pre>
+<pre>
+$ docker commit -m "added password for Jupyter notebook" -a "<b><i>YOUR_NAME</i></b>" <b><i>CONTAINER_ID></b></i> mxnet
+</pre>
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
 
@@ -142,8 +150,8 @@ The command specifies a "-m" flag which is a commit message and a "-a" flag whic
 ![ECR URI](/images/ecr-uri.png)  
 
 <pre>
-$ docker tag mxnet:latest <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i></b>.amazonaws.com/<b><i>ecr_repository</i></b>:latest   
-$ docker push <b><i>aws_account_id</i></b>.dkr.ecr.<b><i>region</i></b>.amazonaws.com/<b><i>ecr_repository</i></b>:latest  
+$ docker tag mxnet:latest <b><i>AWS_ACCOUNT_ID</i></b>.dkr.ecr.<b><i>AWS_REGION</i></b>.amazonaws.com/<b><i>ECR_REPOSITORY</i></b>:latest   
+$ docker push <b><i>AWS_ACCOUNT_ID</i></b>.dkr.ecr.<b><i>AWS_REGION</i></b>.amazonaws.com/<b><i>ECR_REPOSITORY</i></b>:latest  
 </pre>
 
 **Checkpoint**  
@@ -173,7 +181,7 @@ Finallly, set the memory to "2048" and map the host port 80 to the container por
 
 ![Run Task](/images/task-run.png)  
 
-6\. Open a new web browser tab and load the public DNS name - http://***ec2_public_DNS_name***.  You should see the Jupyter login page.
+6\. Open a new web browser tab and load the public DNS name - http://***EC2_PUBLIC_DNS_NAME***.  You should see the Jupyter login page.
 
 ![Jupyter Login](/images/jupyter-login.png)  
 
@@ -185,7 +193,7 @@ In the MXNet example for training an Mnist model, there is a python file that ru
 
 First, SSH into the instance:
 <pre>
-$ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b>
+$ ssh -i <b><i>PRIVATE_KEY.PEM</i></b> ec2-user@<b><i>EC2_PUBLIC_DNS_NAME</i></b>
 </pre>
 
 Once logged in, find the container to connect to by running:
@@ -227,7 +235,7 @@ As you should be able to tell, logging into a machine, then dropping into a shel
 Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is built with a Juypter notebook, so you can interactively walk through the example. 
 
 1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo; the password is what you configured when you built the image in lab 2.  
-http://***ec2_public_dns_name***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
+http://***EC2_PUBLIC_DNS_NAME***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
 
 2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
 
@@ -249,18 +257,20 @@ At this point, you've run through training and prediction examples using the com
 
 2\. Name your task definition, e.g. "mxnet-train".  
 
-3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-train".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
+3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-train".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
 Set the memory to "2048".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
-<pre>/bin/bash, -c</pre>
+<pre>
+/bin/bash, -c
+</pre>
 
 In the **Command** field, type:  
 
 <pre>
-DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python train_mnist.py | tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
+DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python train_mnist.py |& tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
 </pre>  
 
 The command references an OUTPUTBUCKET environment variable, and you can set this in **Env variables**.  Set the key to be "OUTPUTBUCKET" and the value to be the S3 output bucket created by CloudFormation.  You can find the value of your S3 output bucket by going to the CloudFormation stack outputs tab, and used the value for **outputBucketName**.    
@@ -288,18 +298,20 @@ Click **Add** to save this configuration and add it to the task defintion.  Clic
 
 2\. Name your task definition, e.g. "mxnet-predict".  
 
-3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-predict".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
+3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-predict".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
 Set the memory to "2048".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
-`/bin/bash, -c`
+<pre>
+/bin/bash, -c
+</pre>
 
 In the **Command** field, type:  
 
 <pre>
-DATE=`date -Iseconds` && echo \"running predict_imagenet.py $IMAGEURL\" && /usr/local/bin/predict_imagenet.py $IMAGEURL | tee results && echo \"results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt\" && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt && echo \"Task complete!\"
+DATE=`date -Iseconds` && echo \"running predict_imagenet.py $IMAGEURL\" && /usr/local/bin/predict_imagenet.py $IMAGEURL |& tee results && echo \"results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt\" && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt && echo \"Task complete!\"
 </pre>  
 
 Similar to the training task, configure the **Env variables** used by the command.  Set "OUTPUTBUCKET" to be the value of **outputBucketName** from the CloudFormation stack outputs tab.  Set "IMAGEURL" to be a URL to an image to be classified.  This can be a URL to any image, but make sure it's an absolute path to an image file and not one that is dynamically generated.      
@@ -337,8 +349,7 @@ Congratulations on completing the lab...*or at least giving it a good go*!  This
 ## Appendix:  
 
 ### Estimated Costs:    
-Here are estimated costs for running this 2 hour workshop.    
-*add cost estimate for EC2 and other*  
+The estimated cost for running this 2.5 hour workshop is $0.25.
 
 ### Learning Resources:  
 Here are additional resources to learn more about AWS, Docker, MXNet.  
