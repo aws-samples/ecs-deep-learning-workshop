@@ -210,9 +210,7 @@ If you're new to Jupyter, it is essentially a web application that allows you to
  
 1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo:
 
-<pre>
 http://***EC2_PUBLIC_DNS_NAME***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
-</pre>
 
 2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
 
