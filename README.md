@@ -255,7 +255,7 @@ Set the memory to "2048".  Leave the port mapping blank because you will not be 
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
-<pre>/bin/bash, <b>-c</b></pre>
+<pre>/bin/bash, -c</pre>
 
 In the **Command** field, type:  
 
