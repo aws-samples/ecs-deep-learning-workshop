@@ -152,10 +152,11 @@ $ docker commit -m "added password for Jupyter notebook" -a "<b><i>YOUR_NAME</i>
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
 
-10\. Now that you've committed the change you made to your local Docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Below is the command and format for the repository URI.  You can find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
+10\. Now that you've committed the change you made to your local Docker image, tag and push the MXNet Docker image to ECR.  You'll reference this image when you deploy the container using ECS in the next lab.  Find your respository URI in the EC2 Container Service Dashboard; click on **Repositories** in the left menu and click on the repository name that matches the **ecrRepository** output from CloudFormation. The Repository URI will be listed at the top of the screen.  
 
 ![ECR URI](/images/ecr-uri.png)  
 
+In your terminal window, tag and push the image to ECR:    
 <pre>
 $ docker tag mxnet:latest <b><i>AWS_ACCOUNT_ID</i></b>.dkr.ecr.<b><i>AWS_REGION</i></b>.amazonaws.com/<b><i>ECR_REPOSITORY</i></b>:latest   
 $ docker push <b><i>AWS_ACCOUNT_ID</i></b>.dkr.ecr.<b><i>AWS_REGION</i></b>.amazonaws.com/<b><i>ECR_REPOSITORY</i></b>:latest  
