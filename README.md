@@ -153,9 +153,7 @@ ECS is now running your MXNet container on an ECS cluster instance with availabl
 
 ![Run Task](/images/task-run.png)  
 
-6\. Open a new web browser tab and load the public DNS name - http://***EC2_PUBLIC_DNS_NAME***.  You should see the Jupyter login page.
-
-![Jupyter Login](/images/jupyter-login.png)  
+6\. Open a new web browser tab and load the public DNS name to test Jupyter loads properly - http://***EC2_PUBLIC_DNS_NAME***.
 
 ### Lab 4 - Image Classification with MXNet:   
 Now that you have an MXNet container built and deployed with ECS, you can try out an image classification example provided by MXNet to make sure the framework is working properly.  There are two examples you can run through, one for training a model and one for generating a prediction.            
