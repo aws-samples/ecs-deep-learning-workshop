@@ -28,7 +28,7 @@ Throughout this README, we provide commands for you to run in the terminal.  The
 $ ssh -i <b><i>private_key.pem</i></b> ec2-user@<b><i>ec2_public_DNS_name</i></b>
 </pre>
 
-The command starts after $.  Words that are ***bolded italics*** indicate a value that is unique to your environment.  For example, the ***private\_key.pem*** refers to the private key of an SSH key pair that you've created, and the ***ec2\_public\_DNS\_name*** is a value that is specific to an EC2 instance launched in your account.  
+The command starts after $.  Words that are **UPPER CASE BOLD** indicate a value that is unique to your environment.  For example, the ***private\_key.pem*** refers to the private key of an SSH key pair that you've created, and the ***ec2\_public\_DNS\_name*** is a value that is specific to an EC2 instance launched in your account.  
 
 ### Workshop Cleanup:
 This section will appear again below as a reminder because you will be deploying infrastructure on AWS which will have an associated cost.  Fortunately, this workshop should take no more than 2 hours to complete, so costs will be minimal.  See the appendix for an estimate of what this workshop should cost to run.  When you're done with the workshop, follow these steps to make sure everything is cleaned up.  
@@ -133,7 +133,7 @@ Once you've made that change, save and close the file.
 
 9\. At this point, you've edited the container, and in order for your changes to persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, **making sure to substitute your container ID in the command**:
 
-`$ docker commit -m "added password for Jupyter notebook" -a "<your_name>" <your_container_id> mxnet`
+<pre>$ docker commit -m "added password for Jupyter notebook" -a <b><i>"<YOUR_NAME>" <CONTAINER_ID></b></i> mxnet</pre>
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
 
