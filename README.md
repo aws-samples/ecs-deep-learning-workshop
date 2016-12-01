@@ -147,7 +147,7 @@ root@2b3b44bd0eed:~/mxnet# exit
 9\. At this point, you've edited the container, and in order for your changes to persist in the image, you need to commit the changes.  You can do this by using the docker commit command like so, **making sure to substitute your container ID in the command**:
 
 <pre>
-$ docker commit -m "added password for Jupyter notebook" -a "<b><i>YOUR_NAME</i></b>" <b><i>CONTAINER_ID></b></i> mxnet
+$ docker commit -m "added password for Jupyter notebook" -a "<b><i>YOUR_NAME</i></b>" <b><i>CONTAINER_ID</b></i> mxnet
 </pre>
 
 The command specifies a "-m" flag which is a commit message and a "-a" flag which indicates the author of the change.  You're also passing in the unique container ID and the image that you'd like to commit the changes to.  
