@@ -205,7 +205,7 @@ ECS is now running your MXNet container on an ECS cluster instance with availabl
 Now that you have an MXNet container built and deployed with ECS, you can try out an image classification example provided by MXNet to make sure the framework is working properly.  There are two examples you can run through, one for training a model and one for generating a prediction.            
 
 #### Training:    
-In the MXNet example for training an Mnist model, there is a python file that runs the training. You will SSH into the same host that already has Jupyter running that you found in step 5 of lab 3, connect to a specific container, and finally run the training command.
+The first step is to train a model that you can then generate predictions off of later. In this lab, you will use the MNIST database. The MNIST database is a database consisting of handwritten digits very commonly used for training various image processing systems. In the MXNet example for training an MNIST model, there is a python file that runs the training. You will SSH into the same host that already has Jupyter running that you found in step 5 of lab 3, connect to a specific container, and finally run the training command.
 
 First, SSH into the instance:
 <pre>
