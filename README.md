@@ -192,7 +192,7 @@ Choose your ECS Cluster from the dropdown menu.  If you have multiple ECS Cluste
 
 ECS is now running your MXNet container on an ECS cluster instance with available resources.  If you run multiple tasks, ECS will balance out the tasks across the cluster, so one cluster instance doesn't have a disproportionate number of tasks.  
 
-5\. On the Clusters page, you'll see a Tasks tab towards the bottom of the page.  Notice your new task starts in the Pending state.  Click on the refresh button after about 30 seconds to refresh the contents of that tab, repeating the refresh until it is in the Running state. Once the task is in the Running state, you can test accessing the Jupyter notebook.  In addition to the displaying the state of the task, this tab also identifies which container instance the task is running on.  Click on the Container Instance and you'll see the Public DNS of the EC2 instance on the next page.   
+5\. On the Cluster detail page, you'll see a Tasks tab towards the bottom of the page.  Notice your new task starts in the Pending state.  Click on the refresh button after about 30 seconds to refresh the contents of that tab, repeating the refresh until it is in the Running state. Once the task is in the Running state, you can test accessing the Jupyter notebook.  In addition to the displaying the state of the task, this tab also identifies which container instance the task is running on.  Click on the Container Instance and you'll see the Public DNS of the EC2 instance on the next page.   
 
 ![Run Task](/images/task-run.png)  
 
