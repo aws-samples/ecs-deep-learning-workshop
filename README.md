@@ -121,11 +121,11 @@ Verify password:
 >>> <b>exit()</b>
 </pre>  
 
-7\. Use vim to edit ~/.jupyter/jupyter_notebook_config.py. Find *#c.NotebookApp.password = u''*, delete the leading "#", and insert the sha1 hashed password between the single quotes.  It should look like this when you're done (note, the sha1 below is an example, and you would insert your sha1 hash):  
+7\. Use nano (or your favorite editor such as vi or emacs) to edit ~/.jupyter/jupyter_notebook_config.py. Find *#c.NotebookApp.password = u''*, delete the leading "#", and insert the sha1 hashed password between the single quotes.  It should look like this when you're done (note, the sha1 below is an example, and you would insert your sha1 hash):  
 
 `c.NotebookApp.password = u'sha1:51544180f6e8:4c080dd3fcd90736e21903fbef215a45df63f851'`  
 
-Once you've made that change, save and close the file.  If vim is not your editor of choice, you can install your preferred editor, e.g. nano, emacs, to edit the file above.   
+Once you've made that change, save and close the file.
 
 8\. You can now exit your interacive container session:
 

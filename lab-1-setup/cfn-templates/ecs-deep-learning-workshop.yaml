@@ -216,7 +216,9 @@ Resources:
 
                 yum -y --security update
 
-                yum -y install aws-cli git
+                yum -y install aws-cli git emacs nano
+...
+
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
@@ -268,7 +270,7 @@ Resources:
 
                 yum -y --security update
 
-                yum -y install aws-cli git
+                yum -y install aws-cli git emacs nano
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
@@ -320,7 +322,7 @@ Resources:
 
                 yum -y --security update
 
-                yum -y install aws-cli git
+                yum -y install aws-cli git emacs nano
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
@@ -372,7 +374,7 @@ Resources:
 
                 yum -y --security update
 
-                yum -y install aws-cli git
+                yum -y install aws-cli git emacs nano
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
@@ -424,7 +426,7 @@ Resources:
 
                 yum -y --security update
 
-                yum -y install aws-cli git
+                yum -y install aws-cli git emacs nano
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
@@ -476,7 +478,7 @@ Resources:
 
                 yum -y --security update
 
-                yum -y install aws-cli git
+                yum -y install aws-cli git emacs nano
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
