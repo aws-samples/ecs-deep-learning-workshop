@@ -2,7 +2,7 @@
   
   
 ## Overview:
-[Deep Learning (DL)](https://en.wikipedia.org/wiki/Deep_learning) is an implementation of [Machine Learning (ML)](https://en.wikipedia.org/wiki/Machine_learning) that uses neural networks to solve difficult problems such as image recognition, sentiment analysis and recommendations.  Neural networks simulate the functions of the brain where artificial neurons work in concert to detect patterns in data.  This allows deep learning algorithms to classify, predict and recommend with a high degree of accuracy as more data is trained in the network.  DL algorithms generally operate with a high degree of parallelism and is computationally intense.  As a result, emerging deep learning libraries, frameworks, and platforms allow for data and model parallelization and can leverage advancements in GPU technology for improved performance.  
+[Deep Learning (DL)](https://en.wikipedia.org/wiki/Deep_learning) is an implementation of [Machine Learning (ML)](https://en.wikipedia.org/wiki/Machine_learning) that uses neural networks to solve difficult problems such as image recognition, sentiment analysis and recommendations.  Neural networks simulate the functions of the brain where artificial neurons work in concert to detect patterns in data.  This allows deep learning algorithms to classify, predict and recommend with an increasing degree of accuracy as more data is trained in the network.  DL algorithms generally operate with a high degree of parallelism and are computationally intense.  As a result, emerging deep learning libraries, frameworks, and platforms allow for data and model parallelization and can leverage advancements in GPU technology for improved performance.  
 This workshop will walk you through the deployment of a deep learning library called [MXNet](http://mxnet.io) on AWS using [Docker containers](https://www.docker.com/).  Containers provide isolation, portability and repeatability, so your developers can easily spin up an environment and start building without the heavy lifting.  
 
 The goal is not to go deep on the learning (no pun intended) aspects, but to illustrate how easy it is to deploy your deep learning environment on AWS and use the same tools to scale your resources as needed.  
@@ -65,7 +65,7 @@ Region | Launch Template
 **Ohio** (us-east-2) | [![Launch ECS Deep Learning Stack into Ohio with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/ecs-dl-workshop-us-east-2/ecs-deep-learning-workshop.yaml)  
 **Oregon** (us-west-2) | [![Launch ECS Deep Learning Stack into Oregon with CloudFormation](/images/deploy-to-aws.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=ecs-deep-learning-stack&templateURL=https://s3.amazonaws.com/ecs-dl-workshop-us-west-2/ecs-deep-learning-workshop.yaml)  
 
-The template will automatically bring you to the CloudFormation Dashboard and start the stack creation process in the specified region.  The template sets up a VPC, IAM roles, S3 bucket, ECR container registry, and an ECS cluster which is comprised of two EC2 instances with the Docker daemon running on each.  In order to keep costs low in the workshop, the EC2 instances are [EC2 Spot instances](https://aws.amazon.com/ec2/spot/) deployed by [Spot Fleet](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet.html).  The idea is to provide a contained environment, so as not to interfere with any other things in your account.  If you are new to [CloudFormation](https://aws.amazon.com/cloudformation/), take the opportunity to review the [template](https://github.com/awslabs/ecs-deep-learning-workshop/blob/master/lab-1-setup/cfn-templates/ecs-deep-learning-workshop.yaml) during stack creation.  
+The template will automatically bring you to the CloudFormation Dashboard and start the stack creation process in the specified region.  The template sets up a VPC, IAM roles, S3 bucket, ECR container registry and an ECS cluster which is comprised of two EC2 instances with the Docker daemon running on each.  In order to keep costs low in the workshop, the EC2 instances are [EC2 Spot instances](https://aws.amazon.com/ec2/spot/) deployed by [Spot Fleet](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet.html).  The idea is to provide a contained environment, so as not to interfere with any other provisioned resources in your account.  If you are new to [CloudFormation](https://aws.amazon.com/cloudformation/), take the opportunity to review the [template](https://github.com/awslabs/ecs-deep-learning-workshop/blob/master/lab-1-setup/cfn-templates/ecs-deep-learning-workshop.yaml) during stack creation.  
 
 **Checkpoint**  
 Periodically check on the stack creation process in the CloudFormation Dashboard.  Your stack should show status CREATE\_COMPLETE in roughly 5-10 minutes.  In the Outputs tab, take note of the **ecrRepository** and **spotFleetName** values; you will need these in the next lab.     
@@ -161,7 +161,7 @@ Now that you have an MXNet image ready to go, the next step is to create a task 
 
 2\. First, name your task definition, e.g. "mxnet".  If you happen to create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  
 
-3\. Next click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet", which is functionally equivalent to the "--name" option of the Docker run command. This name value can also be used for any container linking.  The image field is the container image that you will be deploying.  The format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
+3\. Next, click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet", which is functionally equivalent to the "--name" option of the Docker run command. This name value can also be used for any container linking.  The image field is the container image that you will be deploying.  The format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***aws_account_id***.dkr.ecr.***region***.amazonaws.com/***ecr_repository***:latest.  
 
 Finallly, set the memory to "2048" and map the host port 80 to the container port 8888.  Port 8888 is the listening port for the Jupter notebook configuration, and we map it to port 80 to reduce running into issues with proxies or firewalls blocking port 8888 during the workshop.  You can leave all other fields as default.  Click **Add** to save this configuration and add it to the task defintion.  Click **Create** to complete the task definition creation step.         
 
@@ -169,7 +169,7 @@ Finallly, set the memory to "2048" and map the host port 80 to the container por
 
 4\. Now that you have a task definition created, you can have ECS deploy an MXNet container to your EC2 cluster using the Run Task option.  On the screen, click on the **Actions** dropdown menu and select **Run Task**.  Choose your ECS Cluster from the dropdown menu.  If you have multiple ECS Clusters in the list, you can find your workshop cluster by referring to the **ecsClusterName** value from the CloudFormation stack Outputs tab.  Keep number of tasks set to 1 and click on **Run Task**.  ECS is now running your MXNet container on an ECS cluster instance with available resources.  If you run multiple tasks, ECS will balance out the tasks across the cluster, so one cluster instance doesn't have a disproportionate number of tasks.  
 
-5\. On the Clusters page, you'll see a Tasks tab towards the bottom of the page.  Notice your new task starts in the Pending state.  Click on the refresh button after a little bit to refresh the contents of that tab, and once it is in the Running state, you can test accessing the Jupyter notebook.  In addition to the running state, this tab also identifies which Container Instance the task is running on.  Click on the Container Instance and you'll see the Public DNS of the EC2 instance on the next page.   
+5\. On the Clusters page, you'll see a Tasks tab towards the bottom of the page.  Notice your new task starts in the Pending state.  Click on the refresh button after about 30 seconds to refresh the contents of that tab, repeating the refresh until it is in the Running state. Once the task is in the Running state, you can test accessing the Jupyter notebook.  In addition to the displaying the state of the task, this tab also identifies which container instance the task is running on.  Click on the Container Instance and you'll see the Public DNS of the EC2 instance on the next page.   
 
 ![Run Task](/images/task-run.png)  
 
@@ -193,7 +193,7 @@ Once logged in, find the container to connect to by running:
 $ docker ps
 </pre>
 
-On the left hand side, you'll find two containers that are running. One for our mxnet container, and one for the amazon-ecs-agent. Note down the CONTAINER_ID of the mxnet image as connect into this specific container. To drop into a shell, execute the /bin/bash command like this:
+On the left hand side, you'll find two containers that are running. One for our mxnet container, and one for the amazon-ecs-agent. Note down the CONTAINER_ID of the mxnet image so we can open a bash shell like this:
 
 <pre>
 $ docker exec -it <b><i>CONTAINER_ID</i></b> /bin/bash
@@ -220,7 +220,7 @@ INFO:root:Epoch[0] Batch [800]	Speed: 13789.07 samples/sec	Train-accuracy=0.9445
 INFO:root:Epoch[0] Batch [900]	Speed: 13754.83 samples/sec	Train-accuracy=0.953750
 </pre>
 
-As you should be able to tell, logging into a machine, then dropping into a shell onto a container isn't the best process to do all of this, and it's very manual. For the prediction section, we will show you a more UI based interactive way of running some commands.
+As you should be able to tell, logging into a machine, then dropping into a shell onto a container isn't the best process to do all of this, and it's very manual. For the prediction section, we will show you a more interactive method of running commands.
 
 
 #### Prediction:    
@@ -255,7 +255,7 @@ Set the memory to "2048".  Leave the port mapping blank because you will not be 
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
-`/bin/bash, -c`
+`/bin/bash, *-c*`
 
 In the **Command** field, type:  
 
@@ -302,7 +302,7 @@ In the **Command** field, type:
 DATE=`date -Iseconds` && echo \"running predict_imagenet.py $IMAGEURL\" && /usr/local/bin/predict_imagenet.py $IMAGEURL | tee results && echo \"results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt\" && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt && echo \"Task complete!\"
 </pre>  
 
-Similar to the training task, configure the **Env variables** used by the command.  Set "OUTPUTBUCKET" to be the value of **outputBucketName** from the CloudFormation stack outputs tab.  Set "IMAGEURL" to be an URL to an image to be classified.  This can be a URL to any image, but make sure it's an absolute path to an image file and not one that is dynamically generated.      
+Similar to the training task, configure the **Env variables** used by the command.  Set "OUTPUTBUCKET" to be the value of **outputBucketName** from the CloudFormation stack outputs tab.  Set "IMAGEURL" to be a URL to an image to be classified.  This can be a URL to any image, but make sure it's an absolute path to an image file and not one that is dynamically generated.      
 
 ![Advanced Configuration - Environment](/images/adv-config-env-predict.png)  
 
