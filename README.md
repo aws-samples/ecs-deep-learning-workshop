@@ -68,7 +68,7 @@ Region | Launch Template
 The template will automatically bring you to the CloudFormation Dashboard and start the stack creation process in the specified region.  The template sets up a VPC, IAM roles, S3 bucket, ECR container registry, and an ECS cluster which is comprised of two EC2 instances with the Docker daemon running on each.  In order to keep costs low in the workshop, the EC2 instances are [EC2 Spot instances](https://aws.amazon.com/ec2/spot/) deployed by [Spot Fleet](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet.html).  The idea is to provide a contained environment, so as not to interfere with any other things in your account.  If you are new to [CloudFormation](https://aws.amazon.com/cloudformation/), take the opportunity to review the [template](https://github.com/awslabs/ecs-deep-learning-workshop/blob/master/lab-1-setup/cfn-templates/ecs-deep-learning-workshop.yaml) during stack creation.  
 
 **Checkpoint**  
-Periodically check on the stack creation process in the CloudFormation Dashboard.  If all goes well, your stack should show status CREATE\_COMPLETE in roughly 5-10 minutes.  In the Outputs tab, take note of the **ecrRepository** and **spotFleetName** values; you will need these in the next lab.     
+Periodically check on the stack creation process in the CloudFormation Dashboard.  Your stack should show status CREATE\_COMPLETE in roughly 5-10 minutes.  In the Outputs tab, take note of the **ecrRepository** and **spotFleetName** values; you will need these in the next lab.     
 
 ![CloudFormation CREATION\_COMPLETE](/images/cf-complete.png)
 
