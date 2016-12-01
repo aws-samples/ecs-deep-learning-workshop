@@ -186,7 +186,11 @@ Finallly, set the Memory Limits to be a Soft Limit of "2048" and map the host po
 
 ![Task Definition](/images/task-def.png)  
 
-4\. Now that you have a task definition created, you can have ECS deploy an MXNet container to your EC2 cluster using the Run Task option.  On the screen, click on the **Actions** dropdown menu and select **Run Task**.  Choose your ECS Cluster from the dropdown menu.  If you have multiple ECS Clusters in the list, you can find your workshop cluster by referring to the **ecsClusterName** value from the CloudFormation stack Outputs tab.  Keep number of tasks set to 1 and click on **Run Task**.  ECS is now running your MXNet container on an ECS cluster instance with available resources.  If you run multiple tasks, ECS will balance out the tasks across the cluster, so one cluster instance doesn't have a disproportionate number of tasks.  
+4\. Now that you have a task definition created, you can have ECS deploy an MXNet container to your EC2 cluster using the Run Task option.  In the **Actions** dropdown menu, select **Run Task**.  
+
+Choose your ECS Cluster from the dropdown menu.  If you have multiple ECS Clusters in the list, you can find your workshop cluster by referring to the **ecsClusterName** value from the CloudFormation stack Outputs tab.  Keep number of tasks set to 1 and click **Run Task**.  
+
+ECS is now running your MXNet container on an ECS cluster instance with available resources.  If you run multiple tasks, ECS will balance out the tasks across the cluster, so one cluster instance doesn't have a disproportionate number of tasks.  
 
 5\. On the Clusters page, you'll see a Tasks tab towards the bottom of the page.  Notice your new task starts in the Pending state.  Click on the refresh button after about 30 seconds to refresh the contents of that tab, repeating the refresh until it is in the Running state. Once the task is in the Running state, you can test accessing the Jupyter notebook.  In addition to the displaying the state of the task, this tab also identifies which container instance the task is running on.  Click on the Container Instance and you'll see the Public DNS of the EC2 instance on the next page.   
 
