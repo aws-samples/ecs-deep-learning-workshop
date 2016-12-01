@@ -304,6 +304,7 @@ Click **Add** to save this configuration and add it to the task defintion.  Clic
 
 ### Extra Credit Challenges:
 * An S3 input bucket was created by the CloudFormation template.  Try uploading images to S3 and running the prediction task against those images.
+* Modify the Dockerfile to enable a password in the Jupyter web interface.
 * Trigger a lambda function when an image is uploaded to the S3 input bucket and have that lambda function call the prediction task.  
 
 * * *
