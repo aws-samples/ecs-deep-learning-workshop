@@ -273,7 +273,7 @@ In the **Command** field, type:
 DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python train_mnist.py |& tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
 </pre>  
 
-The command references an OUTPUTBUCKET environment variable, and you can set this in **Env variables**.  Set the key to be "OUTPUTBUCKET" and the value to be the S3 output bucket created by CloudFormation.  You can find the value of your S3 output bucket by going to the CloudFormation stack outputs tab, and used the value for **outputBucketName**.    
+The command references an OUTPUTBUCKET environment variable, and you can set this in **Env variables**.  Set the key to be "OUTPUTBUCKET" and the value to be the S3 output bucket created by CloudFormation.  You can find the value of your S3 output bucket by going to the CloudFormation stack outputs tab, and used the value for **outputBucketName**.   Set "AWS_DEFAULT_REGION" to be the value of **awsRegionName** from the CloudFormation stack outputs tab.
 
 ![Advanced Configuration - Environment](/images/adv-config-env-train.png)  
 
@@ -314,7 +314,7 @@ In the **Command** field, type:
 DATE=`date -Iseconds` && echo \"running predict_imagenet.py $IMAGEURL\" && /usr/local/bin/predict_imagenet.py $IMAGEURL |& tee results && echo \"results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt\" && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt && echo \"Task complete!\"
 </pre>  
 
-Similar to the training task, configure the **Env variables** used by the command.  Set "OUTPUTBUCKET" to be the value of **outputBucketName** from the CloudFormation stack outputs tab.  Set "IMAGEURL" to be a URL to an image to be classified.  This can be a URL to any image, but make sure it's an absolute path to an image file and not one that is dynamically generated.      
+Similar to the training task, configure the **Env variables** used by the command.  Set "OUTPUTBUCKET" to be the value of **outputBucketName** from the CloudFormation stack outputs tab.  Set "IMAGEURL" to be a URL to an image to be classified.  This can be a URL to any image, but make sure it's an absolute path to an image file and not one that is dynamically generated.  Set "AWS_DEFAULT_REGION" to be the value of **awsRegionName** from the CloudFormation stack outputs tab.    
 
 ![Advanced Configuration - Environment](/images/adv-config-env-predict.png)  
 
