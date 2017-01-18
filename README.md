@@ -103,7 +103,7 @@ $ ssh -i <b><i>PRIVATE_KEY.PEM</i></b> ec2-user@<b><i>EC2_PUBLIC_DNS_NAME</i></b
 4\. Build the Docker image using the provided Dockerfile. <b>Note the trailing period!!</b>
 
 <pre>
-$ docker build --build-arg PASSWORD=<insert_your_password> -t mxnet .
+$ docker build --build-arg PASSWORD=insert_your_password -t mxnet .
 </pre>
 
 <b>IMPORTANT</b>
