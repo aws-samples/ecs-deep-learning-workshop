@@ -53,8 +53,6 @@ RUN pip install jupyter
 RUN jupyter-notebook --generate-config \
   && sed -i "s/#c.NotebookApp.ip = 'localhost'/c.NotebookApp.ip = '*'/g" /root/.jupyter/jupyter_notebook_config.py
 
-#ARG PASSWORD='sha1:e13fee56759d:6c3face46216ab4f19c23f2e343f018aceea6a6f'
-
 ARG PASSWORD
  
 RUN python -c "from notebook.auth import passwd;print(passwd('${PASSWORD}') if '${PASSWORD}' != '' else 'sha1:e13fee56759d:6c3face46216ab4f19c23f2e343f018aceea6a6f')" > ${WORKSHOPDIR}/password_temp
@@ -62,8 +60,6 @@ RUN python -c "from notebook.auth import passwd;print(passwd('${PASSWORD}') if '
 RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(cat ${WORKSHOPDIR}/password_temp)'/g" /root/.jupyter/jupyter_notebook_config.py
 
 RUN rm ${WORKSHOPDIR}/password_temp
-
-#RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(python -c 'from notebook.auth import passwd;print(passwd(\'${PASSWORD}\'))')'/g" /root/.jupyter/jupyter_notebook_config.py
 
 WORKDIR ${WORKSHOPDIR}
 EXPOSE 8888
