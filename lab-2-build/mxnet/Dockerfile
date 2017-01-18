@@ -59,7 +59,7 @@ ARG PASSWORD
  
 RUN python -c "from notebook.auth import passwd;print(passwd('${PASSWORD}') if '${PASSWORD}' != '' else 'sha1:e13fee56759d:6c3face46216ab4f19c23f2e343f018aceea6a6f')" > ${WORKSHOPDIR}/password_temp
  
-RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(if [ -s ${WORKSHOPDIR}/password_temp ] ; then cat ${WORKSHOPDIR}/password_temp; else echo sha1:e13fee56759d:6c3face46216ab4f19c23f2e343f018aceea6a6f; fi)'/g" /root/.jupyter/jupyter_notebook_config.py
+RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(cat ${WORKSHOPDIR}/password_temp)'/g" /root/.jupyter/jupyter_notebook_config.py
 
 RUN rm ${WORKSHOPDIR}/password_temp
 
