@@ -55,7 +55,7 @@ RUN jupyter-notebook --generate-config \
 
 ARG PASSWORD
  
-RUN python -c "from notebook.auth import passwd;print(passwd('${PASSWORD}') if '${PASSWORD}' != '' else 'sha1:e13fee56759d:6c3face46216ab4f19c23f2e343f018aceea6a6f')" > ${WORKSHOPDIR}/password_temp
+RUN python -c "from notebook.auth import passwd;print(passwd('${PASSWORD}') if '${PASSWORD}' != '' else 'sha1:c6bd96fb0824:6654e9eabfc54d0b3d0715ddf9561bed18e09b82')" > ${WORKSHOPDIR}/password_temp
  
 RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(cat ${WORKSHOPDIR}/password_temp)'/g" /root/.jupyter/jupyter_notebook_config.py
 
