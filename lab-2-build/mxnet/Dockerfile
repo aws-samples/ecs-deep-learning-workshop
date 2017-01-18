@@ -53,6 +53,16 @@ RUN pip install jupyter
 RUN jupyter-notebook --generate-config \
   && sed -i "s/#c.NotebookApp.ip = 'localhost'/c.NotebookApp.ip = '*'/g" /root/.jupyter/jupyter_notebook_config.py
 
+ARG PASSWORD
+ 
+RUN python -c "from notebook.auth import passwd;print(passwd('${PASSWORD}'))" > ${WORKSHOPDIR}/password_temp
+ 
+RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(cat ${WORKSHOPDIR}/password_temp)'/g" /root/.jupyter/jupyter_notebook_config.py
+
+RUN rm ${WORKSHOPDIR}/password_temp
+
+#RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(python -c 'from notebook.auth import passwd;print(passwd(\'${PASSWORD}\'))')'/g" /root/.jupyter/jupyter_notebook_config.py
+
 WORKDIR ${WORKSHOPDIR}
 EXPOSE 8888
 CMD ["/usr/local/bin/dumb-init", "/usr/local/bin/jupyter-notebook", "--no-browser"]
