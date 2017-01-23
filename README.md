@@ -100,14 +100,14 @@ $ ssh -i <b><i>PRIVATE_KEY.PEM</i></b> ec2-user@<b><i>EC2_PUBLIC_DNS_NAME</i></b
 3\. Navigate to the lab-2-build/mxnet/ folder to use as your working directory.  
 `$ cd ecs-deep-learning-workshop/lab-2-build/mxnet`
 
-4\. Build the Docker image using the provided Dockerfile. <b>Note the trailing period!!</b>
+4\. Build the Docker image using the provided Dockerfile.  A build argument is used to set the password for the Jupyter notebook login which is used in a later lab.  <b>Also, note the trailing period in the command below!!</b>
 
 <pre>
-$ docker build --build-arg PASSWORD=insert_your_password -t mxnet .
+$ docker build --build-arg PASSWORD=<b><i>INSERT_YOUR_PASSWORD</i></b> -t mxnet .
 </pre>
 
 <b>IMPORTANT</b>
-It is not recommended to use build-time variables for passing secrets like github keys, user credentials etc. Build-time variable values are visible to any user of the image with the docker history command. We have chosen to do it for this lab for simplicity's sake. There are various other methods for secrets management like using [DynamoDB with encryption](https://aws.amazon.com/blogs/developer/client-side-encryption-for-amazon-dynamodb/) and [IAM Roles](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html) or [Hashicorp Vault](https://www.vaultproject.io/).
+It is not recommended to use build-time variables for passing secrets like github keys, user credentials etc. Build-time variable values are visible to any user of the image with the docker history command. We have chosen to do it for this lab for simplicity's sake. There are various other methods for secrets management like using [DynamoDB with encryption](https://aws.amazon.com/blogs/developer/client-side-encryption-for-amazon-dynamodb/) or [S3 with encryption](https://aws.amazon.com/blogs/security/how-to-manage-secrets-for-amazon-ec2-container-service-based-applications-by-using-amazon-s3-and-docker/) for key storage and using [IAM Roles](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html) for granting access.  There are also third party tools such as [Hashicorp Vault](https://www.vaultproject.io/) for secrets management.
 
 This process will take about 10-15 minutes because MXNet is being compiled during the build process.  If you're new to Docker, you can take this opportunity to review the Dockerfile to understand what's going on or take a quick break to grab some coffee/tea.  
 
