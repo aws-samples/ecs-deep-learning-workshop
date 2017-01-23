@@ -103,7 +103,7 @@ $ ssh -i <b><i>PRIVATE_KEY.PEM</i></b> ec2-user@<b><i>EC2_PUBLIC_DNS_NAME</i></b
 4\. Build the Docker image using the provided Dockerfile.  A build argument is used to set the password for the Jupyter notebook login which is used in a later lab.  <b>Also, note the trailing period in the command below!!</b>
 
 <pre>
-$ docker build --build-arg PASSWORD=<b><i>INSERT_YOUR_PASSWORD</i></b> -t mxnet .
+$ docker build --build-arg PASSWORD=<b><i>INSERT_A_PASSWORD</i></b> -t mxnet .
 </pre>
 
 <b>IMPORTANT</b>
