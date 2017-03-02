@@ -95,12 +95,15 @@ $ ssh -i <b><i>PRIVATE_KEY.PEM</i></b> ec2-user@<b><i>EC2_PUBLIC_DNS_NAME</i></b
 </pre>
 
 2\. Once logged into the EC2 instance, clone the workshop github repository so you can easily access the Dockerfile.  
-`$ git clone https://github.com/awslabs/ecs-deep-learning-workshop.git`  
+<pre>$ git clone https://github.com/awslabs/ecs-deep-learning-workshop.git</pre>
 
 3\. Navigate to the lab-2-build/mxnet/ folder to use as your working directory.  
-`$ cd ecs-deep-learning-workshop/lab-2-build/mxnet`
+<pre>$ cd ecs-deep-learning-workshop/lab-2-build/mxnet</pre>
 
-4\. Build the Docker image using the provided Dockerfile.  A build argument is used to set the password for the Jupyter notebook login which is used in a later lab.  <b>Also, note the trailing period in the command below!!</b>
+4\. Start the Docker daemon so that we can use it to build a new image.
+<pre>$ sudo service docker start</pre>
+
+5\. Build the Docker image using the provided Dockerfile.  A build argument is used to set the password for the Jupyter notebook login which is used in a later lab.  <b>Also, note the trailing period in the command below!!</b>
 
 <pre>
 $ docker build --build-arg PASSWORD=<b><i>INSERT_A_PASSWORD</i></b> -t mxnet .
