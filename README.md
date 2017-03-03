@@ -53,7 +53,7 @@ Here is the overall architecture of what you will be building throughout this wo
 
 ### Lab 1 - Set up the Workshop Environment on AWS:    
 
-1\. First, you'll need to select a [region](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) (either **Ohio** or **Oregon**). At the top right hand corner of the AWS Console, you'll see a **Support** dropdown. To the left of that is the region selection dropdown. For this lab, you will need to choose either **Ohio** or **Oregon**. 
+1\. First, you'll need to select a [region](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). For this lab, you will need to choose either **Ohio** or **Oregon**. At the top right hand corner of the AWS Console, you'll see a **Support** dropdown. To the left of that is the region selection dropdown.
 
 2\. Then you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.  
 
@@ -77,7 +77,7 @@ Region | Launch Template
 The template will automatically bring you to the CloudFormation Dashboard and start the stack creation process in the specified region.  The template sets up a VPC, IAM roles, S3 bucket, ECR container registry and an ECS cluster which is comprised of two EC2 instances with the Docker daemon running on each.  In order to keep costs low in the workshop, the EC2 instances are [EC2 Spot instances](https://aws.amazon.com/ec2/spot/) deployed by [Spot Fleet](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet.html).  The idea is to provide a contained environment, so as not to interfere with any other provisioned resources in your account.  If you are new to [CloudFormation](https://aws.amazon.com/cloudformation/), take the opportunity to review the [template](https://github.com/awslabs/ecs-deep-learning-workshop/blob/master/lab-1-setup/cfn-templates/ecs-deep-learning-workshop.yaml) during stack creation.  
 
 **IMPORTANT**
-On the parameter selection page of launching your CloudFormation stack, make sure to choose the keypair that you created in step 1. If you don't see a keypair to select, check your region and try again.
+On the parameter selection page of launching your CloudFormation stack, make sure to choose the key pair that you created in step 1. If you don't see a key pair to select, check your region and try again.
 ![CloudFormation PARAMETERS](/images/cf-params.png)
 
 **Checkpoint**  
