@@ -53,7 +53,7 @@ Here is the overall architecture of what you will be building throughout this wo
 
 ### Lab 1 - Set up the Workshop Environment on AWS:    
 
-1\. First, you'll need to select a [region](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). At the top right hand corner of the AWS Console, you'll see a **Support** dropdown. To the left of that is the region selection dropdown. For this lab, you will need to choose either **Ohio** or **Oregon**. 
+1\. First, you'll need to select a [region](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) (either **Ohio** or **Oregon**). At the top right hand corner of the AWS Console, you'll see a **Support** dropdown. To the left of that is the region selection dropdown. For this lab, you will need to choose either **Ohio** or **Oregon**. 
 
 2\. Then you'll need to create an SSH key pair which will be used to login to the instances once provisioned.  Go to the EC2 Dashboard and click on **Key Pairs** in the left menu under Network & Security.  Click **Create Key Pair**, provide a name (can be anything, make it something memorable) when prompted, and click **Create**.  Once created, the private key in the form of .pem file will be automatically downloaded.  
 
