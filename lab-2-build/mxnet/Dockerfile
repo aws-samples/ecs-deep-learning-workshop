@@ -61,8 +61,7 @@ RUN python -c "from notebook.auth import passwd;print(passwd('${PASSWORD}') if '
  
 RUN sed -i "s/#c.NotebookApp.password = u''/c.NotebookApp.password = u'$(cat ${WORKSHOPDIR}/password_temp)'/g" /root/.jupyter/jupyter_notebook_config.py
 
-#Remove dependency on yann.lecun.com. Will update this to pull the right region using EC2 metadata later.
-RUN sed -i "s/'http://yann.lecun.com/exdb'/'https://s3.us-east-2.amazonaws.com/ecs-dl-workshop-us-east-2/datasets'/g" /root/ecs-deep-learning-workshop/mxnet/example/image-classification/train_mnist.py
+RUN sed -i 's|http://yann.lecun.com/exdb/mnist|https://s3.us-east-2.amazonaws.com/ecs-dl-workshop-us-east-2/datasets/mxnet|g' /root/ecs-deep-learning-workshop/mxnet/example/image-classification/train_mnist.py
 
 RUN rm ${WORKSHOPDIR}/password_temp
 
