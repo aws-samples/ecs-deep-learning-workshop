@@ -19,6 +19,10 @@ RUN apt-get -y install \
   libcurl4-openssl-dev \
   openssh-server
 
+RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py
+
+RUN pip install setuptools==33.1.1
+
 RUN pip install dumb-init
 
 RUN pip install awscli
