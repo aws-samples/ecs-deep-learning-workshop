@@ -127,6 +127,14 @@ $ docker tag mxnet:latest <b><i>AWS_ACCOUNT_ID</i></b>.dkr.ecr.<b><i>AWS_REGION<
 $ docker push <b><i>AWS_ACCOUNT_ID</i></b>.dkr.ecr.<b><i>AWS_REGION</i></b>.amazonaws.com/<b><i>ECR_REPOSITORY</i></b>:latest  
 </pre>
 
+Following the example above, you would enter these commands:
+<pre>
+$ docker tag mxnet:latest 873896820536.dkr.ecs.us-east-2.amazonaws.com/ecs-w-ecrre-1vpw8bk5hr8s9:latest
+$ docker push 873896820536.dkr.ecs.us-east-2.amazonaws.com/ecs-w-ecrre-1vpw8bk5hr8s9:latest
+</pre>
+
+You can copy and paste the Repository URI to make things simpler.
+
 **Checkpoint**  
 Note that you did not need to authenticate docker with ECR because the [Amazon ECR Credential Helper](https://github.com/awslabs/amazon-ecr-credential-helper) has been installed and configured for you on the EC2 instance.
 
