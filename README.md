@@ -85,6 +85,8 @@ Periodically check on the stack creation process in the CloudFormation Dashboard
 
 ![CloudFormation CREATION\_COMPLETE](/images/cf-complete.png)
 
+Note that when your stack moves to a CREATE\_COMPLETE status, you won't necessarily see EC2 instances yet. If you don't, go to the EC2 console and click on **"Spot Requests"**. There you will see the pending or fulfilled spot requests. Once they are fulfilled, you will see your EC2 instances within the EC2 console.
+
 If there was an error during the stack creation process, CloudFormation will rollback and terminate.  You can investigate and troubleshoot by looking in the Events tab.  Any errors encountered during stack creation will appear in the event log.      
 
 ### Lab 2 - Build an MXNet Docker Image:    
