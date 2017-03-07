@@ -131,8 +131,8 @@ $ docker push <b><i>AWS_ACCOUNT_ID</i></b>.dkr.ecr.<b><i>AWS_REGION</i></b>.amaz
 
 Following the example above, you would enter these commands:
 <pre>
-$ docker tag mxnet:latest 873896820536.dkr.ecs.us-east-2.amazonaws.com/ecs-w-ecrre-1vpw8bk5hr8s9:latest
-$ docker push 873896820536.dkr.ecs.us-east-2.amazonaws.com/ecs-w-ecrre-1vpw8bk5hr8s9:latest
+$ docker tag mxnet:latest 873896820536.dkr.ecr.us-east-2.amazonaws.com/ecs-w-ecrre-1vpw8bk5hr8s9:latest
+$ docker push 873896820536.dkr.ecr.us-east-2.amazonaws.com/ecs-w-ecrre-1vpw8bk5hr8s9:latest
 </pre>
 
 You can copy and paste the Repository URI to make things simpler.
