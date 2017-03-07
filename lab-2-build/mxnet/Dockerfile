@@ -7,7 +7,6 @@ RUN apt-get -y install \
   wget \
   build-essential \
   python-dev \
-  python-pip \
   libatlas-base-dev \
   libopencv-dev \
   python-opencv \
@@ -15,7 +14,6 @@ RUN apt-get -y install \
   python-matplotlib \
   python-zmq \
   libzmq-dev \
-  python-setuptools \
   libcurl4-openssl-dev \
   openssh-server
 
