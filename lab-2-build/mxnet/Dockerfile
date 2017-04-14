@@ -52,7 +52,7 @@ RUN echo "export PYTHONPATH=${WORKSHOPDIR}/mxnet/python:$PYTHONPATH" >> ~/.bashr
 
 RUN pip install jupyter
 
-RUN jupyter-notebook --generate-config \
+RUN jupyter-notebook --generate-config --allow-root \
   && sed -i "s/#c.NotebookApp.ip = 'localhost'/c.NotebookApp.ip = '*'/g" /root/.jupyter/jupyter_notebook_config.py
 
 ARG PASSWORD
