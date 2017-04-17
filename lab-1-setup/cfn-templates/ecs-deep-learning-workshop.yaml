@@ -6,15 +6,17 @@ Mappings:
     public-subnet-2: {CIDR: 10.0.2.0/24}
     vpc: {CIDR: 10.0.0.0/16}
   ECSAmi:
-    ap-northeast-1: {AMI: ami-c393d6a4}
-    ap-southeast-1: {AMI: ami-a88530cb}
-    ap-southeast-2: {AMI: ami-8af8ffe9}
-    eu-central-1: {AMI: ami-ec2be583}
-    eu-west-1: {AMI: ami-a7f2acc1}
-    us-east-1: {AMI: ami-b2df2ca4}
-    us-east-2: {AMI: ami-832b0ee6}
-    us-west-1: {AMI: ami-dd104dbd}
-    us-west-2: {AMI: ami-022b9262}
+    us-east-1: {AMI: ami-275ffe31}
+    us-east-2: {AMI: ami-62745007}
+    us-west-1: {AMI: ami-689bc208}
+    us-west-2: {AMI: ami-62d35c02}
+    eu-west-1: {AMI: ami-95f8d2f3}
+    eu-west-2: {AMI: ami-bf9481db}
+    eu-central-1: {AMI: ami-085e8a67}
+    ap-northeast-1: {AMI: ami-f63f6f91}
+    ap-southeast-1: {AMI: ami-b4ae1dd7}
+    ap-southeast-2: {AMI: ami-fbe9eb98}
+    ca-central-1: {AMI: ami-ee58e58a}
 Outputs:
   awsRegionName:
     Description: The name of the AWS Region your template was launched in
