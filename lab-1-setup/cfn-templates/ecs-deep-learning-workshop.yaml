@@ -242,7 +242,11 @@ Resources:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
   scalingPolicy:
     Properties:
-      PolicyName: StepPolicy
+      PolicyName:
+        Fn::Join:
+        - '-'
+        - - Ref: AWS::StackName
+          - StepPolicy
       PolicyType: StepScaling
       ScalingTargetId:
         Ref: scalableTarget
@@ -705,7 +709,11 @@ Resources:
                 - :repository/
                 - Ref: ecrRepository
           Version: '2012-10-17'
-        PolicyName: ecs-deep-learning-workshop-role
+        PolicyName:
+          Fn::Join:
+          - '-'
+          - - Ref: AWS::StackName
+            - ecs-deep-learning-workshop-role
     Type: AWS::IAM::Role
   spotFleetRole:
     Properties:
