@@ -343,6 +343,10 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
+                INSTANCE_ID=$(curl 169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
+
+                /opt/aws/bin/cfn-signal -s true -i $INSTANCE_ID "${spotFleetWaitConditionHandle}"
+
                 '
         - IamInstanceProfile:
             Arn:
@@ -399,6 +403,10 @@ Resources:
 
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
+
+                INSTANCE_ID=$(curl 169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
+
+                /opt/aws/bin/cfn-signal -s true -i $INSTANCE_ID "${spotFleetWaitConditionHandle}"
 
                 '
         - IamInstanceProfile:
@@ -457,6 +465,10 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
+                INSTANCE_ID=$(curl 169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
+
+                /opt/aws/bin/cfn-signal -s true -i $INSTANCE_ID "${spotFleetWaitConditionHandle}"
+
                 '
         - IamInstanceProfile:
             Arn:
@@ -513,6 +525,10 @@ Resources:
 
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
+
+                INSTANCE_ID=$(curl 169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
+
+                /opt/aws/bin/cfn-signal -s true -i $INSTANCE_ID "${spotFleetWaitConditionHandle}"
 
                 '
         - IamInstanceProfile:
@@ -571,6 +587,10 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
+                INSTANCE_ID=$(curl 169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
+
+                /opt/aws/bin/cfn-signal -s true -i $INSTANCE_ID "${spotFleetWaitConditionHandle}"
+
                 '
         - IamInstanceProfile:
             Arn:
@@ -627,6 +647,10 @@ Resources:
 
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
+
+                INSTANCE_ID=$(curl 169.254.169.254/latest/meta-data/instance-id 2>/dev/null)
+
+                /opt/aws/bin/cfn-signal -s true -i $INSTANCE_ID "${spotFleetWaitConditionHandle}"
 
                 '
         SpotPrice: 1.0
@@ -730,6 +754,16 @@ Resources:
       - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole
       Path: /
     Type: AWS::IAM::Role
+  spotFleetWaitCondition:
+    DependsOn: spotFleetWaitConditionHandle
+    Properties:
+      Count: 1
+      Handle:
+        Ref: spotFleetWaitConditionHandle
+      Timeout: 900
+    Type: AWS::CloudFormation::WaitCondition
+  spotFleetWaitConditionHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
   vpc:
     Properties:
       CidrBlock:
