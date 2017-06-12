@@ -1,113 +1,163 @@
+---
 AWSTemplateFormatVersion: 2010-09-09
 Description: Environment for running ECS Deep Learning Workshop
 Mappings:
   CidrMappings:
-    public-subnet-1: {CIDR: 10.0.1.0/24}
-    public-subnet-2: {CIDR: 10.0.2.0/24}
-    vpc: {CIDR: 10.0.0.0/16}
+    public-subnet-1:
+      CIDR: 10.0.1.0/24
+    public-subnet-2:
+      CIDR: 10.0.2.0/24
+    vpc:
+      CIDR: 10.0.0.0/16
   ECSAmi:
-    us-east-1: {AMI: ami-275ffe31}
-    us-east-2: {AMI: ami-62745007}
-    us-west-1: {AMI: ami-689bc208}
-    us-west-2: {AMI: ami-62d35c02}
-    eu-west-1: {AMI: ami-95f8d2f3}
-    eu-west-2: {AMI: ami-bf9481db}
-    eu-central-1: {AMI: ami-085e8a67}
-    ap-northeast-1: {AMI: ami-f63f6f91}
-    ap-southeast-1: {AMI: ami-b4ae1dd7}
-    ap-southeast-2: {AMI: ami-fbe9eb98}
-    ca-central-1: {AMI: ami-ee58e58a}
+    ap-northeast-1:
+      AMI: ami-f63f6f91
+    ap-southeast-1:
+      AMI: ami-b4ae1dd7
+    ap-southeast-2:
+      AMI: ami-fbe9eb98
+    ca-central-1:
+      AMI: ami-ee58e58a
+    eu-central-1:
+      AMI: ami-085e8a67
+    eu-west-1:
+      AMI: ami-95f8d2f3
+    eu-west-2:
+      AMI: ami-bf9481db
+    us-east-1:
+      AMI: ami-275ffe31
+    us-east-2:
+      AMI: ami-62745007
+    us-west-1:
+      AMI: ami-689bc208
+    us-west-2:
+      AMI: ami-62d35c02
 Outputs:
   awsRegionName:
     Description: The name of the AWS Region your template was launched in
-    Value: {Ref: 'AWS::Region'}
+    Value:
+      Ref: AWS::Region
   cloudWatchLogsGroupName:
     Description: Name of the CloudWatch Logs Group
-    Value: {Ref: cloudWatchLogsGroup}
+    Value:
+      Ref: cloudWatchLogsGroup
   ecrRepositoryName:
     Description: The name of the ECR Repository
-    Value: {Ref: ecrRepository}
+    Value:
+      Ref: ecrRepository
   ecsClusterName:
     Description: The name of the ECS Cluster
-    Value: {Ref: ecsCluster}
+    Value:
+      Ref: ecsCluster
   inputBucketName:
     Description: The name of the input S3 Bucket
-    Value: {Ref: inputBucket}
+    Value:
+      Ref: inputBucket
   outputBucketName:
     Description: The name of the output S3 Bucket
-    Value: {Ref: outputBucket}
+    Value:
+      Ref: outputBucket
   spotFleetName:
     Description: The name of the Spot Fleet
-    Value: {Ref: spotFleet}
+    Value:
+      Ref: spotFleet
 Parameters:
-  KeyName: {Description: Name of an existing EC2 KeyPair to enable SSH access to the
-      EC2 instances, Type: 'AWS::EC2::KeyPair::KeyName'}
-  SourceCidr: {Default: 0.0.0.0/0, Description: Optional - CIDR/IP range for instance
-      ssh access - defaults to 0.0.0.0/0, Type: String}
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the EC2 instances
+    Type: AWS::EC2::KeyPair::KeyName
+  SourceCidr:
+    Default: 0.0.0.0/0
+    Description: Optional - CIDR/IP range for instance ssh access - defaults to 0.0.0.0/0
+    Type: String
 Resources:
   attachGateway:
-    DependsOn: [vpc, internetGateway]
+    DependsOn:
+    - vpc
+    - internetGateway
     Properties:
-      InternetGatewayId: {Ref: internetGateway}
-      VpcId: {Ref: vpc}
+      InternetGatewayId:
+        Ref: internetGateway
+      VpcId:
+        Ref: vpc
     Type: AWS::EC2::VPCGatewayAttachment
   cloudWatchLogsGroup:
-    Properties: {RetentionInDays: 7}
+    Properties:
+      RetentionInDays: 7
     Type: AWS::Logs::LogGroup
-  ecrRepository: {Type: 'AWS::ECR::Repository'}
-  ecsCluster: {Type: 'AWS::ECS::Cluster'}
-  inputBucket: {Type: 'AWS::S3::Bucket'}
+  ecrRepository:
+    Type: AWS::ECR::Repository
+  ecsCluster:
+    Type: AWS::ECS::Cluster
+  inputBucket:
+    Type: AWS::S3::Bucket
   internetGateway:
-    DependsOn: [vpc]
+    DependsOn:
+    - vpc
     Type: AWS::EC2::InternetGateway
-  outputBucket: {Type: 'AWS::S3::Bucket'}
+  outputBucket:
+    Type: AWS::S3::Bucket
   predictTaskDefinition:
     Properties:
       ContainerDefinitions:
-      - Command: ['DATE=`date -Iseconds` && echo "running predict_imagenet.py $IMAGEURL"
-            && /usr/local/bin/predict_imagenet.py $IMAGEURL | tee results && echo
-            "results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt"
-            && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt
-            && echo "Task complete!"']
-        EntryPoint: [/bin/bash, -c]
+      - Command:
+        - DATE=`date -Iseconds` && echo "running predict_imagenet.py $IMAGEURL" && /usr/local/bin/predict_imagenet.py
+          $IMAGEURL | tee results && echo "results being written to s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt"
+          && aws s3 cp results s3://$OUTPUTBUCKET/predict_imagenet.results.$HOSTNAME.$DATE.txt
+          && echo "Task complete!"
+        EntryPoint:
+        - /bin/bash
+        - -c
         Environment:
-        - {Name: IMAGEURL, Value: 'https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg'}
+        - Name: IMAGEURL
+          Value: https://images-na.ssl-images-amazon.com/images/G/01/img15/pet-products/small-tiles/23695_pets_vertical_store_dogs_small_tile_8._CB312176604_.jpg
         - Name: OUTPUTBUCKET
-          Value: {Ref: outputBucket}
+          Value:
+            Ref: outputBucket
         - Name: AWS_DEFAULT_REGION
-          Value: {Ref: 'AWS::Region'}
+          Value:
+            Ref: AWS::Region
         Image:
           Fn::Join:
           - ''
-          - - {Ref: 'AWS::AccountId'}
+          - - Ref: AWS::AccountId
             - .dkr.ecr.
-            - {Ref: 'AWS::Region'}
+            - Ref: AWS::Region
             - .amazonaws.com/
-            - {Ref: ecrRepository}
+            - Ref: ecrRepository
             - :latest
         LogConfiguration:
           LogDriver: awslogs
           Options:
-            awslogs-group: {Ref: cloudWatchLogsGroup}
-            awslogs-region: {Ref: 'AWS::Region'}
+            awslogs-group:
+              Ref: cloudWatchLogsGroup
+            awslogs-region:
+              Ref: AWS::Region
             awslogs-stream-prefix: predict_imagenet
         Memory: '2048'
         Name: ecs-deep-learning-workshop
         Privileged: 'true'
     Type: AWS::ECS::TaskDefinition
   publicRoute:
-    DependsOn: [publicRouteTable, attachGateway]
+    DependsOn:
+    - publicRouteTable
+    - attachGateway
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: {Ref: internetGateway}
-      RouteTableId: {Ref: publicRouteTable}
+      GatewayId:
+        Ref: internetGateway
+      RouteTableId:
+        Ref: publicRouteTable
     Type: AWS::EC2::Route
   publicRouteTable:
-    DependsOn: [vpc, attachGateway]
+    DependsOn:
+    - vpc
+    - attachGateway
     Properties:
       Tags:
-      - {Key: Name, Value: Public Route Table}
-      VpcId: {Ref: vpc}
+      - Key: Name
+        Value: Public Route Table
+      VpcId:
+        Ref: vpc
     Type: AWS::EC2::RouteTable
   publicSubnet1:
     DependsOn: attachGateway
@@ -115,19 +165,30 @@ Resources:
       AvailabilityZone:
         Fn::Select:
         - 0
-        - Fn::GetAZs: {Ref: 'AWS::Region'}
+        - Fn::GetAZs:
+            Ref: AWS::Region
       CidrBlock:
-        Fn::FindInMap: [CidrMappings, public-subnet-1, CIDR]
+        Fn::FindInMap:
+        - CidrMappings
+        - public-subnet-1
+        - CIDR
       MapPublicIpOnLaunch: true
       Tags:
-      - {Key: Name, Value: Public Subnet 1}
-      VpcId: {Ref: vpc}
+      - Key: Name
+        Value: Public Subnet 1
+      VpcId:
+        Ref: vpc
     Type: AWS::EC2::Subnet
   publicSubnet1RouteTableAssociation:
-    DependsOn: [publicRouteTable, publicSubnet1, attachGateway]
+    DependsOn:
+    - publicRouteTable
+    - publicSubnet1
+    - attachGateway
     Properties:
-      RouteTableId: {Ref: publicRouteTable}
-      SubnetId: {Ref: publicSubnet1}
+      RouteTableId:
+        Ref: publicRouteTable
+      SubnetId:
+        Ref: publicSubnet1
     Type: AWS::EC2::SubnetRouteTableAssociation
   publicSubnet2:
     DependsOn: attachGateway
@@ -135,32 +196,47 @@ Resources:
       AvailabilityZone:
         Fn::Select:
         - 1
-        - Fn::GetAZs: {Ref: 'AWS::Region'}
+        - Fn::GetAZs:
+            Ref: AWS::Region
       CidrBlock:
-        Fn::FindInMap: [CidrMappings, public-subnet-2, CIDR]
+        Fn::FindInMap:
+        - CidrMappings
+        - public-subnet-2
+        - CIDR
       MapPublicIpOnLaunch: true
       Tags:
-      - {Key: Name, Value: Public Subnet 2}
-      VpcId: {Ref: vpc}
+      - Key: Name
+        Value: Public Subnet 2
+      VpcId:
+        Ref: vpc
     Type: AWS::EC2::Subnet
   publicSubnet2RouteTableAssociation:
-    DependsOn: [publicRouteTable, publicSubnet2, attachGateway]
+    DependsOn:
+    - publicRouteTable
+    - publicSubnet2
+    - attachGateway
     Properties:
-      RouteTableId: {Ref: publicRouteTable}
-      SubnetId: {Ref: publicSubnet2}
+      RouteTableId:
+        Ref: publicRouteTable
+      SubnetId:
+        Ref: publicSubnet2
     Type: AWS::EC2::SubnetRouteTableAssociation
   scalableTarget:
-    DependsOn: [spotFleet, spotFleetAutoscaleRole]
+    DependsOn:
+    - spotFleet
+    - spotFleetAutoscaleRole
     Properties:
-      MaxCapacity: 2
-      MinCapacity: 2
+      MaxCapacity: 1
+      MinCapacity: 1
       ResourceId:
         Fn::Join:
         - /
         - - spot-fleet-request
-          - {Ref: spotFleet}
+          - Ref: spotFleet
       RoleARN:
-        Fn::GetAtt: [spotFleetAutoscaleRole, Arn]
+        Fn::GetAtt:
+        - spotFleetAutoscaleRole
+        - Arn
       ScalableDimension: ec2:spot-fleet-request:TargetCapacity
       ServiceNamespace: ec2
     Type: AWS::ApplicationAutoScaling::ScalableTarget
@@ -168,53 +244,71 @@ Resources:
     Properties:
       PolicyName: StepPolicy
       PolicyType: StepScaling
-      ScalingTargetId: {Ref: scalableTarget}
+      ScalingTargetId:
+        Ref: scalableTarget
       StepScalingPolicyConfiguration:
         AdjustmentType: PercentChangeInCapacity
         Cooldown: 30
         MetricAggregationType: Average
         StepAdjustments:
-        - {MetricIntervalLowerBound: 0, ScalingAdjustment: 100}
+        - MetricIntervalLowerBound: 0
+          ScalingAdjustment: 100
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
   securityGroup:
     Properties:
       GroupDescription: Spot Fleet Instance Security Group
       SecurityGroupIngress:
-      - CidrIp: {Ref: SourceCidr}
+      - CidrIp:
+          Ref: SourceCidr
         FromPort: 22
         IpProtocol: tcp
         ToPort: 22
-      - {CidrIp: 0.0.0.0/0, FromPort: 80, IpProtocol: tcp, ToPort: 80}
-      VpcId: {Ref: vpc}
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
+      VpcId:
+        Ref: vpc
     Type: AWS::EC2::SecurityGroup
   spotFleet:
-    DependsOn: [spotFleetRole, spotFleetInstanceProfile, ecsCluster]
+    DependsOn:
+    - spotFleetRole
+    - spotFleetInstanceProfile
+    - ecsCluster
     Properties:
       SpotFleetRequestConfigData:
         AllocationStrategy: diversified
         IamFleetRole:
-          Fn::GetAtt: [spotFleetRole, Arn]
+          Fn::GetAtt:
+          - spotFleetRole
+          - Arn
         LaunchSpecifications:
         - IamInstanceProfile:
             Arn:
-              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+              Fn::GetAtt:
+              - spotFleetInstanceProfile
+              - Arn
           ImageId:
             Fn::FindInMap:
             - ECSAmi
-            - {Ref: 'AWS::Region'}
+            - Ref: AWS::Region
             - AMI
           InstanceType: m4.large
-          KeyName: {Ref: KeyName}
-          Monitoring: {Enabled: true}
+          KeyName:
+            Ref: KeyName
+          Monitoring:
+            Enabled: true
           SecurityGroups:
-          - GroupId: {Ref: securityGroup}
+          - GroupId:
+              Ref: securityGroup
           SubnetId:
             Fn::Join:
             - ','
-            - - {Ref: publicSubnet1}
-              - {Ref: publicSubnet2}
+            - - Ref: publicSubnet1
+              - Ref: publicSubnet2
           UserData:
-            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+            Fn::Base64:
+              Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
 
@@ -222,8 +316,7 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
-                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
-                /etc/ecs/ecs.config
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >> /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -246,27 +339,33 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
-                '}
+                '
         - IamInstanceProfile:
             Arn:
-              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+              Fn::GetAtt:
+              - spotFleetInstanceProfile
+              - Arn
           ImageId:
             Fn::FindInMap:
             - ECSAmi
-            - {Ref: 'AWS::Region'}
+            - Ref: AWS::Region
             - AMI
           InstanceType: m4.xlarge
-          KeyName: {Ref: KeyName}
-          Monitoring: {Enabled: true}
+          KeyName:
+            Ref: KeyName
+          Monitoring:
+            Enabled: true
           SecurityGroups:
-          - GroupId: {Ref: securityGroup}
+          - GroupId:
+              Ref: securityGroup
           SubnetId:
             Fn::Join:
             - ','
-            - - {Ref: publicSubnet1}
-              - {Ref: publicSubnet2}
+            - - Ref: publicSubnet1
+              - Ref: publicSubnet2
           UserData:
-            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+            Fn::Base64:
+              Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
 
@@ -274,8 +373,7 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
-                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
-                /etc/ecs/ecs.config
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >> /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -298,27 +396,33 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
-                '}
+                '
         - IamInstanceProfile:
             Arn:
-              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+              Fn::GetAtt:
+              - spotFleetInstanceProfile
+              - Arn
           ImageId:
             Fn::FindInMap:
             - ECSAmi
-            - {Ref: 'AWS::Region'}
+            - Ref: AWS::Region
             - AMI
           InstanceType: c4.large
-          KeyName: {Ref: KeyName}
-          Monitoring: {Enabled: true}
+          KeyName:
+            Ref: KeyName
+          Monitoring:
+            Enabled: true
           SecurityGroups:
-          - GroupId: {Ref: securityGroup}
+          - GroupId:
+              Ref: securityGroup
           SubnetId:
             Fn::Join:
             - ','
-            - - {Ref: publicSubnet1}
-              - {Ref: publicSubnet2}
+            - - Ref: publicSubnet1
+              - Ref: publicSubnet2
           UserData:
-            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+            Fn::Base64:
+              Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
 
@@ -326,8 +430,7 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
-                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
-                /etc/ecs/ecs.config
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >> /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -350,27 +453,33 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
-                '}
+                '
         - IamInstanceProfile:
             Arn:
-              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+              Fn::GetAtt:
+              - spotFleetInstanceProfile
+              - Arn
           ImageId:
             Fn::FindInMap:
             - ECSAmi
-            - {Ref: 'AWS::Region'}
+            - Ref: AWS::Region
             - AMI
           InstanceType: c4.xlarge
-          KeyName: {Ref: KeyName}
-          Monitoring: {Enabled: true}
+          KeyName:
+            Ref: KeyName
+          Monitoring:
+            Enabled: true
           SecurityGroups:
-          - GroupId: {Ref: securityGroup}
+          - GroupId:
+              Ref: securityGroup
           SubnetId:
             Fn::Join:
             - ','
-            - - {Ref: publicSubnet1}
-              - {Ref: publicSubnet2}
+            - - Ref: publicSubnet1
+              - Ref: publicSubnet2
           UserData:
-            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+            Fn::Base64:
+              Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
 
@@ -378,8 +487,7 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
-                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
-                /etc/ecs/ecs.config
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >> /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -402,27 +510,33 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
-                '}
+                '
         - IamInstanceProfile:
             Arn:
-              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+              Fn::GetAtt:
+              - spotFleetInstanceProfile
+              - Arn
           ImageId:
             Fn::FindInMap:
             - ECSAmi
-            - {Ref: 'AWS::Region'}
+            - Ref: AWS::Region
             - AMI
           InstanceType: r3.large
-          KeyName: {Ref: KeyName}
-          Monitoring: {Enabled: true}
+          KeyName:
+            Ref: KeyName
+          Monitoring:
+            Enabled: true
           SecurityGroups:
-          - GroupId: {Ref: securityGroup}
+          - GroupId:
+              Ref: securityGroup
           SubnetId:
             Fn::Join:
             - ','
-            - - {Ref: publicSubnet1}
-              - {Ref: publicSubnet2}
+            - - Ref: publicSubnet1
+              - Ref: publicSubnet2
           UserData:
-            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+            Fn::Base64:
+              Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
 
@@ -430,8 +544,7 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
-                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
-                /etc/ecs/ecs.config
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >> /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -454,27 +567,33 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
-                '}
+                '
         - IamInstanceProfile:
             Arn:
-              Fn::GetAtt: [spotFleetInstanceProfile, Arn]
+              Fn::GetAtt:
+              - spotFleetInstanceProfile
+              - Arn
           ImageId:
             Fn::FindInMap:
             - ECSAmi
-            - {Ref: 'AWS::Region'}
+            - Ref: AWS::Region
             - AMI
           InstanceType: r3.xlarge
-          KeyName: {Ref: KeyName}
-          Monitoring: {Enabled: true}
+          KeyName:
+            Ref: KeyName
+          Monitoring:
+            Enabled: true
           SecurityGroups:
-          - GroupId: {Ref: securityGroup}
+          - GroupId:
+              Ref: securityGroup
           SubnetId:
             Fn::Join:
             - ','
-            - - {Ref: publicSubnet1}
-              - {Ref: publicSubnet2}
+            - - Ref: publicSubnet1
+              - Ref: publicSubnet2
           UserData:
-            Fn::Base64: {'Fn::Sub': '#!/bin/bash -xe
+            Fn::Base64:
+              Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
 
@@ -482,8 +601,7 @@ Resources:
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
 
-                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >>
-                /etc/ecs/ecs.config
+                echo ECS_AVAILABLE_LOGGING_DRIVERS=[\"json-file\",\"awslogs\"] >> /etc/ecs/ecs.config
 
                 su - ec2-user -c "aws configure set default.region ${AWS::Region}"
 
@@ -506,40 +624,47 @@ Resources:
                 cd amazon-ecr-credential-helper && make docker && cp bin/local/docker-credential-ecr-login
                 /usr/local/bin/
 
-                '}
+                '
         SpotPrice: 1.0
-        TargetCapacity: 2
+        TargetCapacity: 1
         TerminateInstancesWithExpiration: true
     Type: AWS::EC2::SpotFleet
   spotFleetAutoscaleRole:
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Action: ['sts:AssumeRole']
+        - Action:
+          - sts:AssumeRole
           Effect: Allow
           Principal:
-            Service: [application-autoscaling.amazonaws.com]
+            Service:
+            - application-autoscaling.amazonaws.com
         Version: 2012-10-17
-      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetAutoscaleRole']
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetAutoscaleRole
       Path: /
     Type: AWS::IAM::Role
   spotFleetInstanceProfile:
-    DependsOn: [spotFleetInstanceRole]
+    DependsOn:
+    - spotFleetInstanceRole
     Properties:
       Path: /
       Roles:
-      - {Ref: spotFleetInstanceRole}
+      - Ref: spotFleetInstanceRole
     Type: AWS::IAM::InstanceProfile
   spotFleetInstanceRole:
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Action: ['sts:AssumeRole']
+        - Action:
+          - sts:AssumeRole
           Effect: Allow
           Principal:
-            Service: [ec2.amazonaws.com]
+            Service:
+            - ec2.amazonaws.com
         Version: 2012-10-17
-      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role']
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
       Path: /
       Policies:
       - PolicyDocument:
@@ -550,27 +675,35 @@ Resources:
               Fn::Join:
               - ''
               - - 'arn:aws:s3:::'
-                - {Ref: outputBucket}
-          - Action: ['s3:PutObject', 's3:GetObject', 's3:DeleteObject']
+                - Ref: outputBucket
+          - Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
             Effect: Allow
             Resource:
               Fn::Join:
               - ''
               - - 'arn:aws:s3:::'
-                - {Ref: outputBucket}
+                - Ref: outputBucket
                 - /*
-          - Action: ['ecr:DescribeRepositories', 'ecr:ListImages', 'ecr:InitiateLayerUpload',
-              'ecr:UploadLayerPart', 'ecr:CompleteLayerUpload', 'ecr:PutImage']
+          - Action:
+            - ecr:DescribeRepositories
+            - ecr:ListImages
+            - ecr:InitiateLayerUpload
+            - ecr:UploadLayerPart
+            - ecr:CompleteLayerUpload
+            - ecr:PutImage
             Effect: Allow
             Resource:
               Fn::Join:
               - ''
               - - 'arn:aws:ecr:'
-                - {Ref: 'AWS::Region'}
+                - Ref: AWS::Region
                 - ':'
-                - {Ref: 'AWS::AccountId'}
+                - Ref: AWS::AccountId
                 - :repository/
-                - {Ref: ecrRepository}
+                - Ref: ecrRepository
           Version: '2012-10-17'
         PolicyName: ecs-deep-learning-workshop-role
     Type: AWS::IAM::Role
@@ -578,20 +711,28 @@ Resources:
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Action: ['sts:AssumeRole']
+        - Action:
+          - sts:AssumeRole
           Effect: Allow
           Principal:
-            Service: [spotfleet.amazonaws.com]
+            Service:
+            - spotfleet.amazonaws.com
         Version: 2012-10-17
-      ManagedPolicyArns: ['arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole']
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole
       Path: /
     Type: AWS::IAM::Role
   vpc:
     Properties:
       CidrBlock:
-        Fn::FindInMap: [CidrMappings, vpc, CIDR]
+        Fn::FindInMap:
+        - CidrMappings
+        - vpc
+        - CIDR
       EnableDnsHostnames: true
       EnableDnsSupport: true
       Tags:
-      - {Key: Name, Value: VPC for ECS Deep Learning Workshop}
+      - Key: Name
+        Value: VPC for ECS Deep Learning Workshop
     Type: AWS::EC2::VPC
+...
