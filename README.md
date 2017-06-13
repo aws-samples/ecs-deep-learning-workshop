@@ -81,7 +81,7 @@ The template will automatically bring you to the CloudFormation Dashboard and st
 ![CloudFormation PARAMETERS](/images/cf-params.png)
 
 **Create the stack**  
-In the **Options** screen, accept all defaults- you don't need to make any changes. Click **Next**. On the **Review** page, under **Capabilities** check the box next to **"I acknowledge that AWS CloudFormation might create IAM resources."** and click **Create**.
+After you've selected your ssh key pair, click **Next**. On the **Options** page, accept all defaults- you don't need to make any changes. Click **Next**. On the **Review** page, under **Capabilities** check the box next to **"I acknowledge that AWS CloudFormation might create IAM resources."** and click **Create**. Your CloudFormation stack is now being created.
 
 **Checkpoint**  
 Periodically check on the stack creation process in the CloudFormation Dashboard.  Your stack should show status CREATE\_COMPLETE in roughly 5-10 minutes.  In the Outputs tab, take note of the **ecrRepository** and **spotFleetName** values; you will need these in the next lab.     
