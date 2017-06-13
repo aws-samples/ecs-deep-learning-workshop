@@ -167,7 +167,7 @@ Finallly, set the Memory Limits to be a Soft Limit of "2048" and map the host po
 
 4\. Now that you have a task definition created, you can have ECS deploy an MXNet container to your EC2 cluster using the Run Task option.  In the **Actions** dropdown menu, select **Run Task**.  
 
-Choose your ECS Cluster from the dropdown menu.  If you have multiple ECS Clusters in the list, you can find your workshop cluster by referring to the **ecsClusterName** value from the CloudFormation stack Outputs tab.  Keep number of tasks set to 1 and click **Run Task**.  
+Choose your ECS Cluster from the dropdown menu.  If you have multiple ECS Clusters in the list, you can find your workshop cluster by referring to the **ecsClusterName** value from the CloudFormation stack Outputs tab.  You can leave all other fields as default.  Keep number of tasks set to 1 and click **Run Task**.  
 
 ECS is now running your MXNet container on an ECS cluster instance with available resources.  If you run multiple tasks, ECS will balance out the tasks across the cluster, so one cluster instance doesn't have a disproportionate number of tasks.  
 
@@ -258,7 +258,7 @@ At this point, you've run through training and prediction examples using the com
 
 3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-train".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
-Set the memory to "2048".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+Set the memory to "1024".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
@@ -299,7 +299,7 @@ Click **Add** to save this configuration and add it to the task defintion.  Clic
 
 3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-predict".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
-Set the memory to "2048".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+Set the memory to "1024".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 

@@ -316,6 +316,10 @@ Resources:
 
                 yum -y --security update
 
+                yum -y update ecs-init
+
+                service docker restart
+
                 yum -y install aws-cli git emacs nano aws-cfn-bootstrap
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
@@ -376,6 +380,10 @@ Resources:
               Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
+
+                yum -y update ecs-init
+
+                service docker restart
 
                 yum -y install aws-cli git emacs nano aws-cfn-bootstrap
 
@@ -438,6 +446,10 @@ Resources:
 
                 yum -y --security update
 
+                yum -y update ecs-init
+
+                service docker restart
+
                 yum -y install aws-cli git emacs nano aws-cfn-bootstrap
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
@@ -498,6 +510,10 @@ Resources:
               Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
+
+                yum -y update ecs-init
+
+                service docker restart
 
                 yum -y install aws-cli git emacs nano aws-cfn-bootstrap
 
@@ -560,6 +576,10 @@ Resources:
 
                 yum -y --security update
 
+                yum -y update ecs-init
+
+                service docker restart
+
                 yum -y install aws-cli git emacs nano aws-cfn-bootstrap
 
                 echo ECS_CLUSTER=${ecsCluster} >> /etc/ecs/ecs.config
@@ -620,6 +640,10 @@ Resources:
               Fn::Sub: '#!/bin/bash -xe
 
                 yum -y --security update
+
+                yum -y update ecs-init
+
+                service docker restart
 
                 yum -y install aws-cli git emacs nano aws-cfn-bootstrap
 
