@@ -65,6 +65,7 @@ Parameters:
   KeyName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the EC2 instances
     Type: AWS::EC2::KeyPair::KeyName
+    Minlength: 1
   SourceCidr:
     Default: 0.0.0.0/0
     Description: Optional - CIDR/IP range for instance ssh access - defaults to 0.0.0.0/0
