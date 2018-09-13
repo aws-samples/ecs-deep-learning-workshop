@@ -11,27 +11,37 @@ Mappings:
       CIDR: 10.0.0.0/16
   ECSAmi:
     ap-northeast-1:
-      AMI: ami-f63f6f91
+      AMI: ami-0d5f884dada5562c6
+    ap-northeast-2:
+      AMI: ami-0060ad36f655af38b
+    ap-south-1:
+      AMI: ami-056a07eb5b1d13734
     ap-southeast-1:
-      AMI: ami-b4ae1dd7
+      AMI: ami-065c0bd2832a70f9d
     ap-southeast-2:
-      AMI: ami-fbe9eb98
+      AMI: ami-0aa8b7a8042811ddf
     ca-central-1:
-      AMI: ami-ee58e58a
+      AMI: ami-0d50dee936e241e7e
     eu-central-1:
-      AMI: ami-085e8a67
+      AMI: ami-03804565a6baf6d30
     eu-west-1:
-      AMI: ami-95f8d2f3
+      AMI: ami-0dbcd2533bc72c3f6
     eu-west-2:
-      AMI: ami-bf9481db
+      AMI: ami-005307409c5f6e76c
+    eu-west-3:
+      AMI: ami-024c0b7d07abc6526
+    sa-east-1:
+      AMI: ami-0078e33a9103e1e58
     us-east-1:
-      AMI: ami-275ffe31
+      AMI: ami-0254e5972ebcd132c
     us-east-2:
-      AMI: ami-62745007
+      AMI: ami-0a0d2004b44b9287c
+    us-gov-west-1:
+      AMI: ami-a842dcc9
     us-west-1:
-      AMI: ami-689bc208
+      AMI: ami-0de5608ca20c07aa2
     us-west-2:
-      AMI: ami-62d35c02
+      AMI: ami-093381d21a4fc38d1
 Outputs:
   awsRegionName:
     Description: The name of the AWS Region your template was launched in
@@ -65,7 +75,6 @@ Parameters:
   KeyName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the EC2 instances
     Type: AWS::EC2::KeyPair::KeyName
-    MinLength: 1
   SourceCidr:
     Default: 0.0.0.0/0
     Description: Optional - CIDR/IP range for instance ssh access - defaults to 0.0.0.0/0
