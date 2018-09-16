@@ -5,7 +5,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -y update
 RUN apt-get -y install git \
   python-opencv \
-  python-matplotlib
+  build-essential \
+  python-dev
 
 RUN pip install dumb-init
 RUN pip install awscli
