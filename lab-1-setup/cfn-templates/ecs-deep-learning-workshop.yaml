@@ -687,7 +687,6 @@ Resources:
                 /opt/aws/bin/cfn-signal -s true -i $INSTANCE_ID "${spotFleetWaitConditionHandle}"
 
                 '
-        SpotPrice: 1.0
         TargetCapacity: 1
         TerminateInstancesWithExpiration: true
     Type: AWS::EC2::SpotFleet

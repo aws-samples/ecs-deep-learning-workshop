@@ -210,7 +210,7 @@ Now that you're in the container, you can feel free to navigate around. It shoul
 
 <pre>
 $ cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/
-$ python train_mnist.py
+$ python train_mnist.py --lr-factor 1
 </pre>
 
 You will start to see output right away. It will look like:
