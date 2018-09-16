@@ -10,6 +10,7 @@ RUN apt-get -y install git \
 
 RUN pip install dumb-init
 RUN pip install awscli
+RUN pip install matplotlib
 
 ENV WORKSHOPDIR /root/ecs-deep-learning-workshop
 RUN mkdir ${WORKSHOPDIR}
