@@ -213,7 +213,7 @@ $ cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/
 $ python train_mnist.py --lr-factor 1
 </pre>
 
-You will start to see output right away. It will look like:
+You will start to see output right away. It will something look like:
 <pre>
 INFO:root:Start training with [cpu(0)]
 INFO:root:Epoch[0] Batch [100]	Speed: 13736.09 samples/sec	Train-accuracy=0.782969
@@ -272,7 +272,7 @@ Scroll down to the **Advanced Container configuration** section, and in the **En
 In the **Command** field, type:  
 
 <pre>
-DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python train_mnist.py |& tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
+DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python train_mnist.py --lr-factor 1|& tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
 </pre>  
 
 The command references an OUTPUTBUCKET environment variable, and you can set this in **Env variables**.  Set the key to be "OUTPUTBUCKET" and the value to be the S3 output bucket created by CloudFormation.  You can find the value of your S3 output bucket by going to the CloudFormation stack outputs tab, and used the value for **outputBucketName**.   Set "AWS_DEFAULT_REGION" to be the value of **awsRegionName** from the CloudFormation stack outputs tab.
