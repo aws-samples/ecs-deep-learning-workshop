@@ -24,7 +24,8 @@ COPY predict_imagenet.py /usr/local/bin/
 RUN pip install jupyter
 
 RUN jupyter-notebook --generate-config --allow-root \
-  && sed -i "s/#c.NotebookApp.ip = 'localhost'/c.NotebookApp.ip = '*'/g" /root/.jupyter/jupyter_notebook_config.py
+  && sed -i "s/#c.NotebookApp.ip = 'localhost'/c.NotebookApp.ip = '*'/g" /root/.jupyter/jupyter_notebook_config.py \
+  && sed -i "s/#c.NotebookApp.allow_remote_access = False/c.NotebookApp.allow_remote_access = True/g" /root/.jupyter/jupyter_notebook_config.py
 
 ARG PASSWORD
 
