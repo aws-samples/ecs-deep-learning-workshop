@@ -6,7 +6,8 @@ RUN apt-get -y update
 RUN apt-get -y install git \
   python-opencv \
   build-essential \
-  python-dev
+  python-dev \
+  python-tk
 
 RUN pip install dumb-init
 RUN pip install awscli
