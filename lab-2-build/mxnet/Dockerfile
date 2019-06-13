@@ -15,11 +15,9 @@ ENV WORKSHOPDIR /root/ecs-deep-learning-workshop
 RUN mkdir ${WORKSHOPDIR} 
 
 RUN cd ${WORKSHOPDIR} \
-  && git clone --recursive https://github.com/apache/incubator-mxnet.git mxnet \
-  && git clone https://github.com/dmlc/mxnet-notebooks.git
+  && git clone --recursive https://github.com/apache/incubator-mxnet.git mxnet 
 
 COPY predict_imagenet.py /usr/local/bin/
-COPY mxnet-notebook-spot-workshop /root/ecs-deep-learning-workshop/mxnet-notebooks/python/tutorials/
 
 RUN pip install jupyter
 

@@ -231,21 +231,27 @@ As you should be able to tell, logging into a machine, then dropping into a shel
 
 
 #### Prediction:
-Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is presented as a Juypter notebook, so you can interactively walk through the example.  
+Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images. This example is available [here](https://github.com/apache/incubator-mxnet/blob/master/docs/tutorials/python/predict_image.md) and we will create a new Jupyter notebook to go through it.
 
 If you're new to Jupyter, it is essentially a web application that allows you to interactively step through blocks of written code.  The code can be edited by the user as needed or desired, and there is a play button that lets you step through the cells.  Cells that do not code have no effect, so you can hit play to pass through the cell.  
  
-1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo:
+1\. Open a web browser and visit this URL to access Jupyter:
 
-http://***EC2_PUBLIC_DNS_NAME***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
+http://***EC2_PUBLIC_DNS_NAME***/tree/mxnet/docs/tutorials/python
 
-2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
+2\. Click on the New drop-down button on the right side, and then Python 3 to create a new notebook. 
 
-**IMPORTANT**: In cell 2, the default context is to use gpu, but in the case of this workshop, we're using cpu resources so change the text "gpu" to "cpu".  Being able to switch between using cpu and gpu is a great feature of this library.  See the following screenshot which illustrates where to change from gpu to cpu; also highlighted in the screenshot is the play button which lets you run the cells.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
+![Jupyter Notebook - Create](images/new-jupyter-notebook.png)
+
+3\.Then, on the notebook copy and paste the code blocks on the [example](https://github.com/apache/incubator-mxnet/blob/master/docs/tutorials/python/predict_image.md) and click Run to execute each block as you paste it into the cell. The code loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification. If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
+
+See the following screenshot which illustrates the notebook and the play button which lets you run code on the cells as you paste it. 
 
 ![Jupyter Notebook - Prediction](/images/jupyter-notebook-predict.png)
 
-3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.  Remember that Jupyter notebooks let you input your own code in a cell and run it, so feel free to experiment.    
+**IMPORTANT**: In the second code block, you will see we are setting the context to cpu, as for this workshop we're using cpu resources. When using an instance type with gpu, it is possible to switch the context to GPU.  Being able to switch between using cpu and gpu is a great feature of this library.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
+
+4\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.      
 
 ### Lab 5 - Wrap Image Classification in an ECS Task:
 At this point, you've run through training and prediction examples using the command line and using a Juypter notebook, respectively.  You can also create task definitions to execute these commands, log the outputs to both S3 and CloudWatch Logs, and terminate the container when the task has completed.  S3 will store a log file containing the outputs from each task run, and CloudWatch Logs will have a log group that continues to append outputs from each task run.  In this lab, you will create additional task definitions to accomplish this.  The steps should be familiar because you've done this in lab 3, only the configuration of the task definition will be slightly different. 
