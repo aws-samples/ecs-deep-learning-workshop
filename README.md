@@ -354,7 +354,7 @@ Congratulations on completing the lab...*or at least giving it a good go*!  This
 3. Delete the CloudFormation stack launched at the beginning of the workshop.
 
 * * *
-
+ 
 ## Appendix:  
 
 ### Estimated Costs:    
