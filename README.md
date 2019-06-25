@@ -261,13 +261,13 @@ At this point, you've run through training and prediction examples using the com
 
 #### Training task
 
-1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
+1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**. Select **EC2** as Launch compatibility and click Next step.   
 
 2\. Name your task definition, e.g. "mxnet-train".  
 
 3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-train".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
-Set the memory to "1024".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+Set the memory to "1024" soft limit.  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
@@ -302,13 +302,13 @@ Click **Add** to save this configuration and add it to the task defintion.  Clic
 
 #### Prediction task
 
-1\. Return to the **Task Definitions** page, and click **Create new Task Definition**.    
+1\. Return to the **Task Definitions** page, and click **Create new Task Definition**. Select **EC2** as launch compatibility type and click Next step.   
 
 2\. Name your task definition, e.g. "mxnet-predict".  
 
 3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-predict".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
-Set the memory to "1024".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+Set the memory to "1024" soft limit.  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
