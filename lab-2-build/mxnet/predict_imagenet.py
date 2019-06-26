@@ -1,7 +1,7 @@
-#!/usr/bin/env ipython
+#!/usr/bin/env python3
 
 from __future__ import print_function
-import os, sys, urllib
+import os, sys, urllib.request
 
 if len(sys.argv) < 2:
   print("Usage:", sys.argv[0], "<url>")
@@ -14,7 +14,7 @@ import mxnet as mx
 def download(url,prefix=''):
   filename = prefix+url.split("/")[-1]
   if not os.path.exists(filename):
-    urllib.urlretrieve(url, filename)
+    urllib.request.urlretrieve(url, filename)
 
 path='http://data.mxnet.io/models/imagenet-11k/'
 download(path+'resnet-152/resnet-152-symbol.json', 'full-')
@@ -30,7 +30,6 @@ mod = mx.mod.Module(symbol=sym, context=mx.cpu())
 mod.bind(for_training=False, data_shapes=[('data', (1,3,224,224))])
 mod.set_params(arg_params, aux_params)
 
-get_ipython().magic(u'matplotlib auto')
 import matplotlib
 matplotlib.rc("savefig", dpi=100)
 import cv2
@@ -40,7 +39,7 @@ Batch = namedtuple('Batch', ['data'])
 
 def get_image(url, show=True):
   filename = url.split("/")[-1]
-  urllib.urlretrieve(url, filename)
+  urllib.request.urlretrieve(url, filename)
   img = cv2.imread(filename)
   if img is None:
     print('failed to download ' + url)

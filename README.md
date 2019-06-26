@@ -156,7 +156,7 @@ Now that you have an MXNet image ready to go, the next step is to create a task 
 
 *Note: You'll notice there's a task definition already there in the list.  Ignore this until you reach lab 5.*  
 
-2\. First, name your task definition, e.g. "mxnet".  If you happen to create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  
+2\. First, select **EC2** as launch type compatibility and click on Next Step. Then name your task definition, e.g. "mxnet".  If you happen to create a task definition that is a duplicate of an existing task definition, ECS will create a new revision, incrementing the version number automatically.  
 
 3\. Next, click on **Add container** and complete the fields in the Add container window; for this lab, you will only need to complete the Standard fields.  
 
@@ -210,7 +210,7 @@ Now that you're in the container, you can feel free to navigate around. It shoul
 
 <pre>
 $ cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/
-$ python train_mnist.py --lr-factor 1
+$ python3 train_mnist.py --lr-factor 1
 </pre>
 
 You will start to see output right away. It will something look like:
@@ -231,21 +231,27 @@ As you should be able to tell, logging into a machine, then dropping into a shel
 
 
 #### Prediction:
-Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images.  This example is presented as a Juypter notebook, so you can interactively walk through the example.  
+Since training a model can be resource intensive and a lengthy process, you will run through an example that uses a pre-trained model built from the full [ImageNet](http://image-net.org/) dataset, which is a collection of over 10 million images with thousands of classes for those images. We will use this [tutorial](https://github.com/apache/incubator-mxnet/blob/master/docs/tutorials/python/predict_image.md) and we will create a Jupyter notebook to go through it.
 
 If you're new to Jupyter, it is essentially a web application that allows you to interactively step through blocks of written code.  The code can be edited by the user as needed or desired, and there is a play button that lets you step through the cells.  Cells that do not code have no effect, so you can hit play to pass through the cell.  
  
-1\. Open a web browser and visit this URL to access the Jupyter notebook for the demo:
+1\. Open a web browser and visit this URL to access Jupyter:
 
-http://***EC2_PUBLIC_DNS_NAME***/notebooks/mxnet-notebooks/python/tutorials/predict_imagenet.ipynb
+http://***EC2_PUBLIC_DNS_NAME***/tree/mxnet/docs/tutorials/python
 
-2\. Play through the cells to run through this example, which loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification.  If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
+2\. Click on the New drop-down button on the right side, and then Python 3 to create a new notebook. 
 
-**IMPORTANT**: In cell 2, the default context is to use gpu, but in the case of this workshop, we're using cpu resources so change the text "gpu" to "cpu".  Being able to switch between using cpu and gpu is a great feature of this library.  See the following screenshot which illustrates where to change from gpu to cpu; also highlighted in the screenshot is the play button which lets you run the cells.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
+![Jupyter Notebook - Create](images/new-jupyter-notebook.png)
+
+3\. Then, on the notebook copy and paste the code blocks on the [tutorial](https://github.com/apache/incubator-mxnet/blob/master/docs/tutorials/python/predict_image.md) and click Run to execute each block as you paste it into the cell. The code loads and prepares the pre-trained model as well as provide methods to load images into the model to predict its classification. If you've never used Jupyter before, you're probably wonder how you know something is happening.  Cells with code are denoted on the left with "In [n]" where n is simply a cell number.  When you play a cell that requires processing time, the number will show an asterisk.  
+
+See the following screenshot which illustrates the notebook and the play button which lets you run code on the cells as you paste it. 
 
 ![Jupyter Notebook - Prediction](/images/jupyter-notebook-predict.png)
 
-3\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.  Remember that Jupyter notebooks let you input your own code in a cell and run it, so feel free to experiment.    
+**IMPORTANT**: In the second code block, you will see we are setting the context to cpu, as for this workshop we're using cpu resources. When using an instance type with gpu, it is possible to switch the context to GPU.  Being able to switch between using cpu and gpu is a great feature of this library.  While deep learning performance is better on gpu, you can make use of cpu resources in dev/test environments to keep costs down.  
+
+4\. Once you've stepped through the two examples at the end of the notebook, try feeding arbitrary images to see how well the model performs.      
 
 ### Lab 5 - Wrap Image Classification in an ECS Task:
 At this point, you've run through training and prediction examples using the command line and using a Juypter notebook, respectively.  You can also create task definitions to execute these commands, log the outputs to both S3 and CloudWatch Logs, and terminate the container when the task has completed.  S3 will store a log file containing the outputs from each task run, and CloudWatch Logs will have a log group that continues to append outputs from each task run.  In this lab, you will create additional task definitions to accomplish this.  The steps should be familiar because you've done this in lab 3, only the configuration of the task definition will be slightly different. 
@@ -255,13 +261,13 @@ At this point, you've run through training and prediction examples using the com
 
 #### Training task
 
-1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**.    
+1\. Open the EC2 Container Service dashboard, click on **Task Definitions** in the left menu, and click **Create new Task Definition**. Select **EC2** as Launch compatibility and click Next step.   
 
 2\. Name your task definition, e.g. "mxnet-train".  
 
 3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-train".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
-Set the memory to "1024".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+Set the memory to "1024" soft limit.  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
@@ -272,7 +278,7 @@ Scroll down to the **Advanced Container configuration** section, and in the **En
 In the **Command** field, type:  
 
 <pre>
-DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python train_mnist.py --lr-factor 1|& tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
+DATE=`date -Iseconds` && echo \\\"running train_mnist.py\\\" && cd /root/ecs-deep-learning-workshop/mxnet/example/image-classification/ && python3 train_mnist.py --lr-factor 1|& tee results && echo \\\"results being written to s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt\\\" && aws s3 cp results s3://$OUTPUTBUCKET/train_mnist.results.$HOSTNAME.$DATE.txt && echo \\\"Task complete!\\\"
 </pre>  
 
 The command references an OUTPUTBUCKET environment variable, and you can set this in **Env variables**.  Set the key to be "OUTPUTBUCKET" and the value to be the S3 output bucket created by CloudFormation.  You can find the value of your S3 output bucket by going to the CloudFormation stack outputs tab, and used the value for **outputBucketName**.   Set "AWS_DEFAULT_REGION" to be the value of **awsRegionName** from the CloudFormation stack outputs tab.
@@ -296,13 +302,13 @@ Click **Add** to save this configuration and add it to the task defintion.  Clic
 
 #### Prediction task
 
-1\. Return to the **Task Definitions** page, and click **Create new Task Definition**.    
+1\. Return to the **Task Definitions** page, and click **Create new Task Definition**. Select **EC2** as launch compatibility type and click Next step.   
 
 2\. Name your task definition, e.g. "mxnet-predict".  
 
 3\. Click on **Add container** and complete the Standard fields in the Add container window.  Provide a name for your container, e.g. "mxnet-predict".  The image field is the same container image that you deployed previously.  As a reminder, the format is equivalent to the *registry/repository:tag* format used in lab 2, step 6, i.e. ***AWS_ACCOUNT_ID***.dkr.ecr.***AWS_REGION***.amazonaws.com/***ECR_REPOSITORY***:latest.  
 
-Set the memory to "1024".  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
+Set the memory to "1024" soft limit.  Leave the port mapping blank because you will not be starting the Jupyter process, and instead running a command to perform the training.  
 
 Scroll down to the **Advanced Container configuration** section, and in the **Entry point** field, type:  
 
@@ -320,7 +326,7 @@ Similar to the training task, configure the **Env variables** used by the comman
 
 ![Advanced Configuration - Environment](/images/adv-config-env-predict.png)  
 
-Configure the **Log configuration** section as you did for the training task.  Select **awslogs** from the *Log driver* dropdown menu.  For *Log options*, set the **awslogs-group** to be the value of **cloudWatchLogsGroupName** from the CloudFormation stack outputs tab.  And type in the region you're currently using, e.g. Ohio would be us-east-2, Oregon would be us-west-2.  Leave the **awslogs-stream-prefix** blank.    
+Configure the **Log configuration** section as you did for the training task.  Un-check "Auto-configure CloudWatch Logs" and select **awslogs** from the *Log driver* dropdown menu.  For *Log options*, set the **awslogs-group** to be the value of **cloudWatchLogsGroupName** from the CloudFormation stack outputs tab.  And type in the region you're currently using, e.g. Ohio would be us-east-2, Oregon would be us-west-2.  Leave the **awslogs-stream-prefix** blank.    
   
 If you are using GPU instances, you will need to check the box for **Privileged** in the **Security** section.  Since we're using CPU instances, leave the box unchecked.          
 
@@ -348,7 +354,7 @@ Congratulations on completing the lab...*or at least giving it a good go*!  This
 3. Delete the CloudFormation stack launched at the beginning of the workshop.
 
 * * *
-
+ 
 ## Appendix:  
 
 ### Estimated Costs:    
